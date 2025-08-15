@@ -298,33 +298,30 @@ body{
 </nav>
 
 <script>
-/* ========= 風向儀動畫 ===================================================== */
-const NEEDLE_OFFSET = -38;        // 校正 SVG 原始方向
-let roseReady = false;
-let currentNeedleAngle = 0;       // 目前指針已呈現角度
+  /* ========= 風向儀動畫 ===================================================== */
+  let currentNeedleAngle = 0;
 
-function updateNeedle(angle){
-  if(!roseReady) return;
-  const svg = document.getElementById('windRose').contentDocument;
-  if(!svg) return;
-  svg.querySelectorAll('.st0').forEach(el=>{
-    el.setAttribute('transform',`rotate(${(angle+NEEDLE_OFFSET)%360} 100 100)`);
-  });
-}
-
-function animateNeedle(target){
-  if(!roseReady){currentNeedleAngle=target;updateNeedle(target);return;}
-  const shortest=((target-currentNeedleAngle+540)%360)-180; // 最短角度差
-  const start=performance.now(),dur=800;
-  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
-  function step(now){
-    const p=Math.min(1,(now-start)/dur);
-    updateNeedle(currentNeedleAngle+shortest*ease(p));
-    if(p<1)requestAnimationFrame(step);else currentNeedleAngle=target;
+  function updateNeedle(angle){
+    const svg = document.getElementById('windRose').contentDocument;
+    if (!svg) return;                           // 若極端情況仍未載入則直接略過
+    svg.querySelectorAll('.st0').forEach(el=>{
+      el.setAttribute('transform', `rotate(${angle % 360} 100 100)`);
+    });
   }
-  requestAnimationFrame(step);
-}
-document.getElementById('windRose').addEventListener('load',()=>{roseReady=true;updateNeedle(currentNeedleAngle);});
+  
+  function animateNeedle(target){
+    const shortest = ((target - currentNeedleAngle + 540) % 360) - 180;
+    const start = performance.now(), dur = 800;
+    const ease = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
+  
+    function step(now){
+      const p = Math.min(1, (now - start) / dur);
+      updateNeedle(currentNeedleAngle + shortest * ease(p));
+      if (p < 1) requestAnimationFrame(step);
+      else currentNeedleAngle = target;
+    }
+    requestAnimationFrame(step);
+  }
 
 /* ========= Navbar Active 標示 ============================================= */
 document.querySelectorAll('.nav-item').forEach(btn=>{
