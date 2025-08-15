@@ -15,655 +15,501 @@
   --accent:#ffcc9a; --cardTop:#2b2b2b; --cardBottom:#8a8a8a;
   --divider:rgba(255,255,255,.08);
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
-  margin:0; background:var(--bg); color:var(--text);
-  font-family: Inter, "Noto Sans TC", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-  display:flex; justify-content:center; align-items:flex-start; padding:16px;
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,"Noto Sans TC",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  display:flex;justify-content:center;align-items:flex-start;padding:16px;
 }
-
-/* 版心與網格 */
-.container{ width:412px; padding-bottom:160px; } /* navbar + 浮窗空間 */
-.grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-
-/* 卡片 */
+/* 版心與網格 -----------------------------------------------------------------*/
+.container{width:412px;padding-bottom:160px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+/* 卡片 -----------------------------------------------------------------------*/
 .card{
-  border-radius:20px; background:linear-gradient(180deg,var(--cardTop),var(--cardBottom));
-  padding:14px 16px 16px; box-shadow:0 4px 10px rgba(0,0,0,.25);
-  display:flex; flex-direction:column; min-height:170px;
+  border-radius:20px;background:linear-gradient(180deg,var(--cardTop),var(--cardBottom));
+  padding:14px 16px 16px;box-shadow:0 4px 10px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;min-height:170px;
 }
-.header{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-.header-left{ display:flex; align-items:center; gap:6px; color:var(--muted); font-size:13px; }
-.header-left img{ width:16px; height:16px; object-fit:contain; }
-.chev{ color:rgba(255,255,255,.55); font-size:18px; line-height:1; }
-.hint{ margin-top:6px; color:var(--accent); font-size:11px; }
-.main{ margin-top:6px; font-size:32px; line-height:1; letter-spacing:.2px; min-height:38px; }
-.kvlist{ margin-top:10px; border-top:1px solid var(--divider); padding-top:8px; }
-.kv{ display:flex; align-items:center; justify-content:space-between; font-size:12px; margin:6px 0; }
-.kv .left{ display:flex; align-items:center; gap:8px; }
-.kv .left img{ width:14px; height:14px; object-fit:contain; opacity:.9; }
-.kv .label{ color:var(--muted); }
-.kv .value{ color:#fff; }
-.value.neg{ color:#7ec7ff; } .value.pos{ color:#78e3cf; }
-
-/* 專用版型 */
-.card.fish{ grid-column:1 / span 2; padding:16px 18px; min-height:auto; }
-.fish .title{ font-weight:600; letter-spacing:.3px; }
-.fish .sub{ margin-top:4px; color:var(--accent); font-size:11px; }
-.fish .row{ margin-top:8px; display:grid; grid-template-columns:1fr auto; align-items:center; gap:10px; }
-.fish .dial{ width:132px; height:132px; object-fit:contain; }
-.fish .periods{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.period{ text-align:center; font-size:10px; }
-.period .muted{ color:rgba(255,255,255,.5); display:block; margin-bottom:4px; }
-
-.weather .topline{ display:flex; align-items:center; gap:10px; margin-top:6px; }
-.weather .now{ font-size:32px; }
-.weather .icon{
-  width:28px; height:28px; border-radius:4px;
-  display:inline-flex; align-items:center; justify-content:center;
-  overflow:hidden; flex:0 0 auto;
-}
-.weather .icon img{ width:100%; height:100%; object-fit:contain; display:block; }
-.weather .hi-lo{ font-size:11px; opacity:.85; line-height:1.15; }
-.wave .main{ margin-bottom:2px; }
-.wind .dialwrap{ margin-top:6px; position:relative; height:150px; }
-.wind .rose{ position:absolute; left:50%; top:0; transform:translateX(-50%); width:150px; height:150px; object-fit:contain; }
-.wind .center{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.35; }
-.wind .center .lvl{ font-size:16px; } .wind .center .spd,.wind .center .dir{ font-size:12px; }
-
-.uv .uvbar{ margin-top:8px; height:12px; border-radius:999px; background:linear-gradient(90deg,#fa6161,#d545fd); position:relative; overflow:hidden; }
-.uv .uvbar .pin{ position:absolute; left:6px; top:50%; transform:translateY(-50%); width:8px; height:8px; background:#fff; border-radius:50%; }
-
-.pressure .dialwrap{ margin-top:6px; position:relative; height:120px; }
-.pressure .gauge{ position:absolute; left:50%; top:10px; transform:translateX(-50%); width:140px; height:96px; object-fit:contain; }
-.pressure .read{ position:absolute; left:0; right:0; top:40px; display:flex; flex-direction:column; align-items:center; gap:3px; }
-.pressure .read .num{ font-size:28px; }
-.pressure .range{ position:absolute; left:26px; right:26px; bottom:8px; display:flex; justify-content:space-between; font-size:11px; }
-
-.moon .moon-row{ display:flex; align-items:center; gap:12px; margin-top:10px; }
-.moon .moon-phase{ width:48px; height:48px; object-fit:contain; flex:0 0 auto; }
-.moon .stats{ display:flex; flex-direction:column; gap:8px; font-size:12px; line-height:1.35; }
-.moon .stat-row{ display:flex; align-items:center; gap:8px; }
-.moon .stat-row img{ width:14px; height:14px; object-fit:contain; opacity:.9; }
-.moon .stat-row .label{ color:var(--muted); }
-.moon .stat-row .value{ margin-left:auto; }
-
-/* ── 底部 Navbar ───────────────────────────────── */
+.header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.header-left{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;}
+.header-left img{width:16px;height:16px;object-fit:contain;}
+.chev{color:rgba(255,255,255,.55);font-size:18px;line-height:1;}
+.hint{margin-top:6px;color:var(--accent);font-size:11px;}
+.main{margin-top:6px;font-size:32px;line-height:1;letter-spacing:.2px;min-height:38px;}
+.kvlist{margin-top:10px;border-top:1px solid var(--divider);padding-top:8px;}
+.kv{display:flex;align-items:center;justify-content:space-between;font-size:12px;margin:6px 0;}
+.kv .left{display:flex;align-items:center;gap:8px;}
+.kv .left img{width:14px;height:14px;object-fit:contain;opacity:.9;}
+.kv .label{color:var(--muted);}
+.kv .value{color:#fff;}
+.value.neg{color:#7ec7ff;}.value.pos{color:#78e3cf;}
+/* Fish card */
+.card.fish{grid-column:1 / span 2;padding:16px 18px;min-height:auto;}
+.fish .title{font-weight:600;letter-spacing:.3px;}
+.fish .sub{margin-top:4px;color:var(--accent);font-size:11px;}
+.fish .row{margin-top:8px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;}
+.fish .dial{width:132px;height:132px;object-fit:contain;}
+.fish .periods{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.period{text-align:center;font-size:10px;}
+.period .muted{color:rgba(255,255,255,.5);display:block;margin-bottom:4px;}
+/* Weather card */
+.weather .topline{display:flex;align-items:center;gap:10px;margin-top:6px;}
+.weather .now{font-size:32px;}
+.weather .icon{width:28px;height:28px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 auto;}
+.weather .icon img{width:100%;height:100%;object-fit:contain;display:block;}
+.weather .hi-lo{font-size:11px;opacity:.85;line-height:1.15;}
+/* Wave card */
+.wave .main{margin-bottom:2px;}
+/* Wind card */
+.wind .dialwrap{margin-top:6px;position:relative;height:150px;}
+.wind .rose{position:absolute;left:50%;top:0;transform:translateX(-50%);width:150px;height:150px;object-fit:contain;}
+.wind .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.35;}
+.wind .center .lvl{font-size:16px;}
+.wind .center .spd,.wind .center .dir{font-size:12px;}
+/* UV */
+.uv .uvbar{margin-top:8px;height:12px;border-radius:999px;background:linear-gradient(90deg,#fa6161,#d545fd);position:relative;overflow:hidden;}
+.uv .uvbar .pin{position:absolute;left:6px;top:50%;transform:translateY(-50%);width:8px;height:8px;background:#fff;border-radius:50%;}
+/* Pressure */
+.pressure .dialwrap{margin-top:6px;position:relative;height:120px;}
+.pressure .gauge{position:absolute;left:50%;top:10px;transform:translateX(-50%);width:140px;height:96px;object-fit:contain;}
+.pressure .read{position:absolute;left:0;right:0;top:40px;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.pressure .read .num{font-size:28px;}
+.pressure .range{position:absolute;left:26px;right:26px;bottom:8px;display:flex;justify-content:space-between;font-size:11px;}
+/* Moon */
+.moon .moon-row{display:flex;align-items:center;gap:12px;margin-top:10px;}
+.moon .moon-phase{width:48px;height:48px;object-fit:contain;flex:0 0 auto;}
+.moon .stats{display:flex;flex-direction:column;gap:8px;font-size:12px;line-height:1.35;}
+.moon .stat-row{display:flex;align-items:center;gap:8px;}
+.moon .stat-row img{width:14px;height:14px;object-fit:contain;opacity:.9;}
+.moon .stat-row .label{color:var(--muted);}
+/* Navbar -------------------------------------------------------*/
 .navbar{
-  position:fixed; left:50%; bottom:0; transform:translateX(-50%);
-  width:412px; max-width:100vw; height:76px; z-index:50;
-  background:black; border-top:1px solid var(--divider);
-  box-shadow:0 -6px 16px rgba(0,0,0,.35);
-  padding-bottom:env(safe-area-inset-bottom);
+  position:fixed;left:50%;bottom:0;transform:translateX(-50%);
+  width:412px;max-width:100vw;height:76px;z-index:50;
+  background:#000;border-top:1px solid var(--divider);
+  box-shadow:0 -6px 16px rgba(0,0,0,.35);padding-bottom:env(safe-area-inset-bottom);
 }
-.navbar .nav-inner{
-  height:76px; display:flex; align-items:center; justify-content:space-between;
-  padding:0 31px;
-}
-.nav-item{
-  width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center;
-  opacity:.6; border:0; background:none; padding:0; cursor:pointer;
-}
-.nav-item img{ width:30px; height:30px; object-fit:contain; display:block; }
-.nav-item.active{ opacity:1; filter:drop-shadow(0 2px 0 rgba(12,0,247,.15)); }
-
-/* ── 漂浮地區選擇器 ─────────────────────────────── */
+.navbar .nav-inner{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 31px;}
+.nav-item{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;opacity:.6;background:none;border:0;padding:0;cursor:pointer;}
+.nav-item img{width:30px;height:30px;object-fit:contain;display:block;}
+.nav-item.active{opacity:1;filter:drop-shadow(0 2px 0 rgba(12,0,247,.15));}
+/* Loc chip -----------------------------------------------------*/
 .loc-chip{
-  position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(20px);
-  width:calc(100% - 48px); max-width:412px; z-index:60;
-  display:flex; align-items:center; gap:8px;
-  padding:10px 12px; border-radius:999px;
-  background:rgba(0, 0, 0, 0.8);
-  box-shadow:0 8px 24px rgba(0,0,0,.35);
-  opacity:0; pointer-events:none; transition:.25s ease;
+  position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);
+  width:calc(100% - 48px);max-width:412px;z-index:60;
+  display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:999px;
+  background:rgba(0,0,0,.8);box-shadow:0 8px 24px rgba(0,0,0,.35);
+  opacity:0;pointer-events:none;transition:.25s ease;
 }
-.loc-chip.show{ transform:translateX(-50%) translateY(0); opacity:1; pointer-events:auto; }
-.loc-chip .left-ico{ width:18px; height:18px; flex:0 0 auto; }
-.loc-chip .right-btn{
-  width:28px; height:28px; flex:0 0 auto; border-radius:999px; border:none; cursor:pointer;
-  background:rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center;
-}
-.loc-chip .right-btn img{ width:18px; height:18px; }
-.loc-chip .text{ flex:1; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-/* 底部選單（地點挑選） */
-.sheet-mask{
-  position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:70; opacity:0; pointer-events:none; transition:.25s ease;
-}
-.sheet-mask.show{ opacity:1; pointer-events:auto; }
+.loc-chip.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;}
+.loc-chip .left-ico{width:18px;height:18px;flex:0 0 auto;}
+.loc-chip .right-btn{width:28px;height:28px;flex:0 0 auto;border-radius:999px;border:none;cursor:pointer;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;}
+.loc-chip .right-btn img{width:18px;height:18px;}
+.loc-chip .text{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* Bottom sheet -------------------------------------------------*/
+.sheet-mask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:70;opacity:0;pointer-events:none;transition:.25s ease;}
+.sheet-mask.show{opacity:1;pointer-events:auto;}
 .sheet{
-  position:fixed; left:50%; bottom:0; transform:translateX(-50%) translateY(100%);
-  width:412px; max-width:100vw; z-index:75;
-  background:linear-gradient(180deg,#2b2b2b,#8a8a8a);
-  border-radius:20px 20px 0 0; box-shadow:0 -10px 30px rgba(0,0,0,.4);
-  padding:14px 16px 24px; transition:.35s ease;
+  position:fixed;left:50%;bottom:0;transform:translateX(-50%) translateY(100%);
+  width:412px;max-width:100vw;z-index:75;background:linear-gradient(180deg,#2b2b2b,#8a8a8a);
+  border-radius:20px 20px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.4);
+  padding:14px 16px 24px;transition:.35s ease;
 }
-.sheet.show{ transform:translateX(-50%) translateY(0); }
-.sheet .sheet-header{ display:flex; align-items:center; justify-content:space-between; }
-.sheet .title{ font-weight:600; }
-.sheet .close{ background:none; border:0; color:#fff; font-size:20px; cursor:pointer; opacity:.8; }
-.sheet .search{ margin:10px 0 12px; }
-.sheet .search input{
-  width:100%; height:36px; border-radius:10px; border:1px solid var(--divider);
-  background:rgba(0,0,0,.25); color:#fff; padding:0 10px; outline:none;
-}
-.sheet ul{ list-style:none; padding:0; margin:0; max-height:40vh; overflow:auto; }
-.sheet li{ display:flex; align-items:center; gap:10px; padding:10px 6px; border-bottom:1px solid var(--divider); cursor:pointer; }
-.sheet li:hover{ background:rgba(0,0,0,.15); }
-.sheet li img{ width:16px; height:16px; }
-
+.sheet.show{transform:translateX(-50%) translateY(0);}
+.sheet .sheet-header{display:flex;align-items:center;justify-content:space-between;}
+.sheet .title{font-weight:600;}
+.sheet .close{background:none;border:0;color:#fff;font-size:20px;cursor:pointer;opacity:.8;}
+.sheet .search{margin:10px 0 12px;}
+.sheet .search input{width:100%;height:36px;border-radius:10px;border:1px solid var(--divider);background:rgba(0,0,0,.25);color:#fff;padding:0 10px;outline:none;}
+.sheet ul{list-style:none;padding:0;margin:0;max-height:40vh;overflow:auto;}
+.sheet li{display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid var(--divider);cursor:pointer;}
+.sheet li:hover{background:rgba(0,0,0,.15);}
+.sheet li img{width:16px;height:16px;}
 /* RWD */
-@media (max-width:420px){
-  .container{ width:100%; max-width:412px; }
-  .grid{ grid-template-columns:1fr; }
-  .card.fish{ grid-column:auto; }
-  .navbar{ width:100%; max-width:412px; }
+@media(max-width:420px){
+  .container{width:100%;max-width:412px;}
+  .grid{grid-template-columns:1fr;}
+  .card.fish{grid-column:auto;}
+  .navbar{width:100%;max-width:412px;}
 }
 </style>
 </head>
 <body>
-  <div class="container">
-    <div class="grid">
-
-      <!-- 魚兒活躍指數（示意，靜態） -->
-      <section class="card fish">
-        <div class="header">
-          <div class="title">魚兒活躍指數</div><div class="chev">›</div>
+<div class="container">
+  <div class="grid">
+    <!-- 魚兒活躍指數 --------------------------------------------------------->
+    <section class="card fish">
+      <div class="header"><div class="title">魚兒活躍指數</div><div class="chev">›</div></div>
+      <div class="sub">良好！魚群活躍</div>
+      <div class="row">
+        <div class="periods">
+          <div class="period"><span class="muted">主要活躍期</span>清晨7:31–上午10:01</div>
+          <div class="period"><span class="muted">次級活躍期</span>清晨1:55–凌晨3:35</div>
         </div>
-        <div class="sub">良好！魚群活躍</div>
-        <div class="row">
-          <div class="periods">
-            <div class="period"><span class="muted">主要活躍期</span>清晨7:31–上午10:01</div>
-            <div class="period"><span class="muted">次級活躍期</span>清晨1:55–凌晨3:35</div>
-          </div>
-          <img class="dial" src="assets/images/Dashboardmockup__fishinindex.png" alt="">
+        <img class="dial" src="assets/images/Dashboardmockup__fishinindex.png" alt="">
+      </div>
+    </section>
+    <!-- 潮汐 ----------------------------------------------------------------->
+    <section class="card tide">
+      <div class="header"><div class="header-left"><img src="assets/images/Icon_tide.png" alt=""><span>潮汐</span></div><div class="chev">›</div></div>
+      <div class="hint">退潮中，明天再釣魚吧</div>
+      <div class="main">0.19 m</div>
+      <div class="kvlist">
+        <div class="kv"><div class="left"><span class="label">下次乾潮時間</span></div><span class="value">—</span></div>
+        <div class="kv"><div class="left"><span class="label">下次乾潮高度</span></div><span class="value neg">—</span></div>
+        <div class="kv"><div class="left"><span class="label">下次滿潮時間</span></div><span class="value">—</span></div>
+        <div class="kv"><div class="left"><span class="label">下次滿潮高度</span></div><span class="value pos">—</span></div>
+      </div>
+    </section>
+    <!-- 天氣 ----------------------------------------------------------------->
+    <section class="card weather" id="card-weather">
+      <div class="header"><div class="header-left"><span>天氣</span></div><div class="chev">›</div></div>
+      <div class="hint" id="weather-hint">資料載入中…</div>
+      <div class="topline">
+        <div class="now"><span id="temp-now">--</span>°</div>
+        <div class="icon" id="weatherIcon" role="img" aria-label="天氣圖示"></div>
+        <div class="hi-lo">↑ <span id="temp-hi">--</span>°C<br>↓ <span id="temp-lo">--</span>°C</div>
+      </div>
+      <div class="kvlist">
+        <div class="kv">
+          <div class="left"><img src="assets/images/Icon_precipitation_probability.png" alt=""><span class="label">降雨機率</span></div>
+          <span class="value" id="precip-prob">--%</span>
         </div>
-      </section>
-
-      <!-- 潮汐（示意，仍靜態） -->
-      <section class="card tide">
-        <div class="header"><div class="header-left"><img src="assets/images/Icon_tide.png" alt=""><span>潮汐</span></div><div class="chev">›</div></div>
-        <div class="hint">退潮中，明天再釣魚吧</div>
-        <div class="main">0.19 m</div>
-        <div class="kvlist">
-          <div class="kv"><div class="left"><span class="label">下次乾潮時間</span></div><span class="value">—</span></div>
-          <div class="kv"><div class="left"><span class="label">下次乾潮高度</span></div><span class="value neg">—</span></div>
-          <div class="kv"><div class="left"><span class="label">下次滿潮時間</span></div><span class="value">—</span></div>
-          <div class="kv"><div class="left"><span class="label">下次滿潮高度</span></div><span class="value pos">—</span></div>
+        <div class="kv">
+          <div class="left"><img src="assets/images/Icon_apparent_temperature.png" alt=""><span class="label">體感溫度</span></div>
+          <span class="value"><span id="apparent">--</span>°</span>
         </div>
-      </section>
-
-      <!-- 天氣（圖示用 GitHub Raw） -->
-      <section class="card weather" id="card-weather">
-        <div class="header"><div class="header-left"><span>天氣</span></div><div class="chev">›</div></div>
-        <div class="hint" id="weather-hint">資料載入中…</div>
-        <div class="topline">
-          <div class="now"><span id="temp-now">--</span>°</div>
-          <div class="icon" id="weatherIcon" role="img" aria-label="天氣圖示"></div>
-          <div class="hi-lo">↑ <span id="temp-hi">--</span>°C<br>↓ <span id="temp-lo">--</span>°C</div>
+        <div class="kv">
+          <div class="left"><img src="assets/images/Icon_relative_humidity_2m.png" alt=""><span class="label">濕度</span></div>
+          <span class="value" id="humidity">--%</span>
         </div>
-        <div class="kvlist">
-          <div class="kv">
-            <div class="left"><img src="assets/images/Icon_precipitation_probability.png" alt=""><span class="label">降雨機率</span></div>
-            <span class="value" id="precip-prob">--%</span>
-          </div>
-          <div class="kv">
-            <div class="left"><img src="assets/images/Icon_apparent_temperature.png" alt=""><span class="label">體感溫度</span></div>
-            <span class="value"><span id="apparent">--</span>°</span>
-          </div>
-          <div class="kv">
-            <div class="left"><img src="assets/images/Icon_relative_humidity_2m.png" alt=""><span class="label">濕度</span></div>
-            <span class="value" id="humidity">--%</span>
-          </div>
+      </div>
+    </section>
+    <!-- 浪況 ----------------------------------------------------------------->
+    <section class="card wave" id="card-wave">
+      <div class="header"><div class="header-left"><img src="assets/images/Icon_wave.png" alt=""><span>浪況</span></div><div class="chev">›</div></div>
+      <div class="hint" id="wave-hint">資料載入中…</div>
+      <div class="main"><span id="wave-current">--</span> <span style="font-size:18px;">m/s</span></div>
+      <div class="kvlist">
+        <div class="kv">
+          <div class="left"><img src="assets/images/Icon_wavetemperture.png" alt=""><span class="label">海洋溫度</span></div>
+          <span class="value"><span id="sea-temp">--</span>°</span>
         </div>
-      </section>
-
-      <!-- 浪況 -->
-      <section class="card wave" id="card-wave">
-        <div class="header"><div class="header-left"><img src="assets/images/Icon_wave.png" alt=""><span>浪況</span></div><div class="chev">›</div></div>
-        <div class="hint" id="wave-hint">資料載入中…</div>
-        <div class="main"><span id="wave-current">--</span> <span style="font-size:18px;">m/s</span></div>
-        <div class="kvlist">
-          <div class="kv">
-            <div class="left"><img src="assets/images/Icon_wavetemperture.png" alt=""><span class="label">海洋溫度</span></div>
-            <span class="value"><span id="sea-temp">--</span>°</span>
-          </div>
-          <div class="kv">
-            <div class="left"><img src="assets/images/Icon_wavespeed.png" alt=""><span class="label">海流速度</span></div>
-            <span class="value"><span id="current-speed">--</span> m/s</span>
-          </div>
-          <div class="kv">
-            <div class="left"><img src="assets/images/Icon_wave_direction.png" alt=""><span class="label">浪的方向</span></div>
-            <span class="value" id="wave-dir">--</span>
-          </div>
+        <div class="kv">
+          <div class="left"><img src="assets/images/Icon_wavespeed.png" alt=""><span class="label">海流速度</span></div>
+          <span class="value"><span id="current-speed">--</span> m/s</span>
         </div>
-      </section>
-
-      <!-- 風 -->
-      <section class="card wind" id="card-wind">
-        <div class="header"><div class="header-left"><img src="assets/images/icon_wind.png" alt=""><span>風</span></div><div class="chev">›</div></div>
-        <div class="hint" id="wind-hint">資料載入中…</div>
-        <div class="dialwrap">
-          <img class="rose" src="assets/images/Dashboardmockup_wind.png" alt="">
-          <div class="center">
-            <div class="lvl" id="wind-beaufort">—級</div>
-            <div class="spd" id="wind-speed">— 公里/h</div>
-            <div class="dir" id="wind-dir">—°</div>
-          </div>
+        <div class="kv">
+          <div class="left"><img src="assets/images/Icon_wave_direction.png" alt=""><span class="label">浪的方向</span></div>
+          <span class="value" id="wave-dir">--</span>
         </div>
-      </section>
-
-      <!-- 紫外線 -->
-      <section class="card uv" id="card-uv">
-        <div class="header"><div class="header-left"><img src="assets/images/Icon_uv.png" alt=""><span>紫外線</span></div><div class="chev">›</div></div>
-        <div class="hint" id="uv-hint">資料載入中…</div>
-        <div class="main" id="uv-index">0</div>
-        <div class="uvbar"><span class="pin" id="uv-pin" aria-hidden="true"></span></div>
-      </section>
-
-      <!-- 氣壓 -->
-      <section class="card pressure" id="card-pressure">
-        <div class="header"><div class="header-left"><img src="assets/images/Icon_surface_pressure.png" alt="" style="width:14px;height:14px;"><span>氣壓</span></div><div class="chev">›</div></div>
-        <div class="hint" id="press-hint">資料載入中…</div>
-        <div class="dialwrap">
-          <img class="gauge" src="assets/images/Dashboardmockup_surface_pressure.png" alt="">
-          <div class="read">
-            <div>↓</div>
-            <div class="num" id="pressure">—</div>
-            <div style="font-size:12px;">百帕</div>
-          </div>
-          <div class="range"><span>低</span><span>高</span></div>
+      </div>
+    </section>
+    <!-- 風 ------------------------------------------------------------------->
+    <section class="card wind" id="card-wind">
+      <div class="header"><div class="header-left"><img src="assets/images/icon_wind.png" alt=""><span>風</span></div><div class="chev">›</div></div>
+      <div class="hint" id="wind-hint">資料載入中…</div>
+      <div class="dialwrap">
+        <!-- SVG 以 object 引入，方便存取 DOM -->
+        <object id="windRose" class="rose" data="assets/images/Dashboardmockup_wind.svg" type="image/svg+xml"></object>
+        <div class="center">
+          <div class="lvl" id="wind-beaufort">—級</div>
+          <div class="spd" id="wind-speed">— 公里/h</div>
+          <div class="dir" id="wind-dir">—°</div>
         </div>
-      </section>
-
-      <!-- 月相（仍靜態示意） -->
-      <section class="card moon">
-        <div class="header"><div class="header-left"><span>月相</span></div><div class="chev">›</div></div>
-        <div class="hint">夜光亮度高，魚兒較挑食</div>
-        <div class="moon-row">
-          <img class="moon-phase" src="assets/images/Image_mockupmoonstate.png" alt="月相">
-          <div class="stats">
-            <div class="stat-row"><img src="assets/images/Icon_birghtness.png" alt=""><span class="label">亮度</span><span class="value">-%</span></div>
-            <div class="stat-row"><img src="assets/images/icon_moonset.png" alt=""><span class="label">月出</span><span class="value">-</span></div>
-            <div class="stat-row"><img src="assets/images/icon_fullMoon.png" alt=""><span class="label">下次盈</span><span class="value">-天</span></div>
-          </div>
+      </div>
+    </section>
+    <!-- 紫外線 --------------------------------------------------------------->
+    <section class="card uv" id="card-uv">
+      <div class="header"><div class="header-left"><img src="assets/images/Icon_uv.png" alt=""><span>紫外線</span></div><div class="chev">›</div></div>
+      <div class="hint" id="uv-hint">資料載入中…</div>
+      <div class="main" id="uv-index">0</div>
+      <div class="uvbar"><span class="pin" id="uv-pin" aria-hidden="true"></span></div>
+    </section>
+    <!-- 氣壓 ----------------------------------------------------------------->
+    <section class="card pressure" id="card-pressure">
+      <div class="header"><div class="header-left"><img src="assets/images/Icon_surface_pressure.png" alt="" style="width:14px;height:14px;"><span>氣壓</span></div><div class="chev">›</div></div>
+      <div class="hint" id="press-hint">資料載入中…</div>
+      <div class="dialwrap">
+        <img class="gauge" src="assets/images/Dashboardmockup_surface_pressure.png" alt="">
+        <div class="read">
+          <div>↓</div>
+          <div class="num" id="pressure">—</div>
+          <div style="font-size:12px;">百帕</div>
         </div>
-      </section>
-
-      <!-- 日落 / 下次日出 -->
-      <section class="card" id="card-sun">
-        <div class="header"><div class="header-left"><img src="assets/images/Icon_sun.png" alt="" style="width:16px; height:10px;"><span>日落</span></div><div class="chev">›</div></div>
-        <div class="hint" id="sun-hint">資料載入中…</div>
-        <div style="margin-top:10px;display:flex;justify-content:center;">
-          <img class="dial" src="assets/images/Dashboardmockup_sun.png" width="120" alt="">
+        <div class="range"><span>低</span><span>高</span></div>
+      </div>
+    </section>
+    <!-- 月相 ----------------------------------------------------------------->
+    <section class="card moon">
+      <div class="header"><div class="header-left"><span>月相</span></div><div class="chev">›</div></div>
+      <div class="hint">夜光亮度高，魚兒較挑食</div>
+      <div class="moon-row">
+        <img class="moon-phase" src="assets/images/Image_mockupmoonstate.png" alt="月相">
+        <div class="stats">
+          <div class="stat-row"><img src="assets/images/Icon_birghtness.png" alt=""><span class="label">亮度</span><span class="value">-%</span></div>
+          <div class="stat-row"><img src="assets/images/icon_moonset.png" alt=""><span class="label">月出</span><span class="value">-</span></div>
+          <div class="stat-row"><img src="assets/images/icon_fullMoon.png" alt=""><span class="label">下次盈</span><span class="value">-天</span></div>
         </div>
-        <div style="margin-top:8px; font-size:12px;">下次日出：<span id="sunrise-next">—</span></div>
-      </section>
-
-    </div>
+      </div>
+    </section>
+    <!-- 日落 / 日出 ----------------------------------------------------------->
+    <section class="card" id="card-sun">
+      <div class="header"><div class="header-left"><img src="assets/images/Icon_sun.png" alt="" style="width:16px;height:10px;"><span>日落</span></div><div class="chev">›</div></div>
+      <div class="hint" id="sun-hint">資料載入中…</div>
+      <div style="margin-top:10px;display:flex;justify-content:center;">
+        <img class="dial" src="assets/images/Dashboardmockup_sun.png" width="120" alt="">
+      </div>
+      <div style="margin-top:8px;font-size:12px;">下次日出：<span id="sunrise-next">—</span></div>
+    </section>
   </div>
+</div>
 
-  <!-- 漂浮地區選擇器（chip） -->
-  <div class="loc-chip" id="locChip" role="button" aria-label="選擇地區">
-    <img class="left-ico" src="assets/images/icon_selectable.png" alt="">
-    <div class="text" id="locText">定位中…</div>
-    <button class="right-btn" id="openSheetBtn" aria-label="開啟地區選單">
-      <img src="assets/images/icon_locationmain.png" alt="">
-    </button>
+<!-- 漂浮地區選擇器 ----------------------------------------------------------->
+<div class="loc-chip" id="locChip" role="button" aria-label="選擇地區">
+  <img class="left-ico" src="assets/images/icon_selectable.png" alt="">
+  <div class="text" id="locText">定位中…</div>
+  <button class="right-btn" id="openSheetBtn" aria-label="開啟地區選單">
+    <img src="assets/images/icon_locationmain.png" alt="">
+  </button>
+</div>
+
+<!-- 地點 Bottom Sheet --------------------------------------------------------->
+<div class="sheet-mask" id="sheetMask"></div>
+<section class="sheet" id="sheet">
+  <div class="sheet-header">
+    <div class="title">選擇地區</div>
+    <button class="close" id="sheetClose" aria-label="關閉">✕</button>
   </div>
+  <div class="search"><input type="search" id="placeSearch" placeholder="搜尋地點或關鍵字"></div>
+  <ul id="placeList"></ul>
+</section>
 
-  <!-- 地點挑選 Bottom Sheet -->
-  <div class="sheet-mask" id="sheetMask"></div>
-  <section class="sheet" id="sheet">
-    <div class="sheet-header">
-      <div class="title">選擇地區</div>
-      <button class="close" id="sheetClose" aria-label="關閉">✕</button>
-    </div>
-    <div class="search">
-      <input type="search" id="placeSearch" placeholder="搜尋地點或關鍵字">
-    </div>
-    <ul id="placeList"></ul>
-  </section>
-
-  <!-- 底部 Navbar -->
-  <nav class="navbar" role="navigation" aria-label="底部導覽">
-    <div class="nav-inner">
-      <button class="nav-item active" aria-label="今天" data-nav="today">
-        <img src="assets/images/Icon_nav_today.png" alt="">
-      </button>
-      <button class="nav-item" aria-label="週預報" data-nav="weekly">
-        <img src="assets/images/Icon_nav_weeklypredict.png" alt="">
-      </button>
-      <button class="nav-item" aria-label="相機" data-nav="camera">
-        <img src="assets/images/Icon_nav_camera.png" alt="">
-      </button>
-      <button class="nav-item" aria-label="我的位置" data-nav="location" id="navLocation">
-        <img src="assets/images/Icon_nav_mylocation.png" alt="">
-      </button>
-      <button class="nav-item" aria-label="設定" data-nav="settings">
-        <img src="assets/images/Icon_nav_setting.png" alt="">
-      </button>
-    </div>
-  </nav>
+<!-- Navbar ------------------------------------------------------------------->
+<nav class="navbar" role="navigation" aria-label="底部導覽">
+  <div class="nav-inner">
+    <button class="nav-item active" aria-label="今天" data-nav="today"><img src="assets/images/Icon_nav_today.png" alt=""></button>
+    <button class="nav-item" aria-label="週預報" data-nav="weekly"><img src="assets/images/Icon_nav_weeklypredict.png" alt=""></button>
+    <button class="nav-item" aria-label="相機" data-nav="camera"><img src="assets/images/Icon_nav_camera.png" alt=""></button>
+    <button class="nav-item" aria-label="我的位置" data-nav="location" id="navLocation"><img src="assets/images/Icon_nav_mylocation.png" alt=""></button>
+    <button class="nav-item" aria-label="設定" data-nav="settings"><img src="assets/images/Icon_nav_setting.png" alt=""></button>
+  </div>
+</nav>
 
 <script>
-/* ========= Navbar active 標示 ========= */
+/* ========= 風向儀動畫 ===================================================== */
+const NEEDLE_OFFSET = -38;        // 校正 SVG 原始方向
+let roseReady = false;
+let currentNeedleAngle = 0;       // 目前指針已呈現角度
+
+function updateNeedle(angle){
+  if(!roseReady) return;
+  const svg = document.getElementById('windRose').contentDocument;
+  if(!svg) return;
+  svg.querySelectorAll('.st0').forEach(el=>{
+    el.setAttribute('transform',`rotate(${(angle+NEEDLE_OFFSET)%360} 100 100)`);
+  });
+}
+
+function animateNeedle(target){
+  if(!roseReady){currentNeedleAngle=target;updateNeedle(target);return;}
+  const shortest=((target-currentNeedleAngle+540)%360)-180; // 最短角度差
+  const start=performance.now(),dur=800;
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  function step(now){
+    const p=Math.min(1,(now-start)/dur);
+    updateNeedle(currentNeedleAngle+shortest*ease(p));
+    if(p<1)requestAnimationFrame(step);else currentNeedleAngle=target;
+  }
+  requestAnimationFrame(step);
+}
+document.getElementById('windRose').addEventListener('load',()=>{roseReady=true;updateNeedle(currentNeedleAngle);});
+
+/* ========= Navbar Active 標示 ============================================= */
 document.querySelectorAll('.nav-item').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
+  btn.addEventListener('click',()=>{
     document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
   });
 });
 
-/* ========= 地區 chip：下滑隱藏、上滑顯示 ========= */
-const locChip = document.getElementById('locChip');
-let sheetOpen = false;
-let lastY = window.scrollY;
+/* ========= LocChip 滾動影藏 ============================================== */
+const locChip=document.getElementById('locChip');
+let sheetOpen=false,lastY=window.scrollY;
 locChip.classList.add('show');
-window.addEventListener('scroll', ()=>{
-  if (sheetOpen) return;
-  const y = window.scrollY;
-  if (y > lastY) locChip.classList.remove('show');   // 下滑 -> 隱藏
-  else if (y < lastY) locChip.classList.add('show'); // 上滑 -> 顯示
-  lastY = y;
+window.addEventListener('scroll',()=>{
+  if(sheetOpen)return;
+  const y=window.scrollY;
+  if(y>lastY)locChip.classList.remove('show');else if(y<lastY)locChip.classList.add('show');
+  lastY=y;
 },{passive:true});
 
-/* 點 navbar 的「我的位置」：回頂 */
-document.getElementById('navLocation').addEventListener('click', ()=>{
-  window.scrollTo({top:0, behavior:'smooth'});
-});
+/* ========= Bottom Sheet 控制 ============================================= */
+const sheetMask=document.getElementById('sheetMask'),sheet=document.getElementById('sheet'),openSheetBtn=document.getElementById('openSheetBtn'),sheetClose=document.getElementById('sheetClose');
+function openSheet(){sheetOpen=true;locChip.classList.add('show');sheet.classList.add('show');sheetMask.classList.add('show');}
+function closeSheet(){sheetOpen=false;sheet.classList.remove('show');sheetMask.classList.remove('show');}
+openSheetBtn.addEventListener('click',openSheet);
+locChip.addEventListener('click',openSheet);
+sheetMask.addEventListener('click',closeSheet);
+sheetClose.addEventListener('click',closeSheet);
 
-/* ========= Bottom Sheet（地區挑選） ========= */
-const sheetMask = document.getElementById('sheetMask');
-const sheet = document.getElementById('sheet');
-const openSheetBtn = document.getElementById('openSheetBtn');
-const sheetClose = document.getElementById('sheetClose');
-function openSheet(){ sheetOpen = true; locChip.classList.add('show'); sheet.classList.add('show'); sheetMask.classList.add('show'); }
-function closeSheet(){ sheetOpen = false; sheet.classList.remove('show'); sheetMask.classList.remove('show'); }
-openSheetBtn.addEventListener('click', openSheet);
-locChip.addEventListener('click', openSheet);
-sheetMask.addEventListener('click', closeSheet);
-sheetClose.addEventListener('click', closeSheet);
-
-/* ========= 常用地點清單 ========= */
-const FAVORITES = [
-  {name:'使用目前位置', useCurrent:true},
-  {name:'梧棲漁港（台中）', lat:24.256, lon:120.508},
-  {name:'基隆港', lat:25.15, lon:121.75},
-  {name:'淡水河出海口', lat:25.17, lon:121.40},
-  {name:'馬公港（澎湖）', lat:23.566, lon:119.566}
+/* ========= 地點清單 ======================================================= */
+const FAVORITES=[
+  {name:'使用目前位置',useCurrent:true},
+  {name:'梧棲漁港（台中）',lat:24.256,lon:120.508},
+  {name:'基隆港',lat:25.15,lon:121.75},
+  {name:'淡水河出海口',lat:25.17,lon:121.40},
+  {name:'馬公港（澎湖）',lat:23.566,lon:119.566}
 ];
-const placeList = document.getElementById('placeList');
-const placeSearch = document.getElementById('placeSearch');
-function renderList(keyword=''){
-  placeList.innerHTML = '';
-  FAVORITES
-    .filter(p => p.useCurrent || p.name.toLowerCase().includes(keyword.toLowerCase()))
-    .forEach(p=>{
-      const li = document.createElement('li');
-      const ico = document.createElement('img'); ico.src = 'assets/images/icon_selectable.png'; ico.alt='';
-      const span = document.createElement('span'); span.textContent = p.name;
-      li.append(ico, span);
-      li.addEventListener('click', async ()=>{
-        closeSheet();
-        if (p.useCurrent) {
-          const {lat, lon} = await getCoords();
-          await loadAll(lat, lon, true);
-        } else {
-          await loadAll(p.lat, p.lon, true);
-        }
-        window.scrollTo({top:0, behavior:'smooth'});
-      });
-      placeList.appendChild(li);
+const placeList=document.getElementById('placeList'),placeSearch=document.getElementById('placeSearch');
+function renderList(kw=''){
+  placeList.innerHTML='';
+  FAVORITES.filter(p=>p.useCurrent||p.name.toLowerCase().includes(kw.toLowerCase())).forEach(p=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<img src="assets/images/icon_selectable.png" alt=""><span>${p.name}</span>`;
+    li.addEventListener('click',async()=>{
+      closeSheet();
+      const {lat,lon}=p.useCurrent?await getCoords():{lat:p.lat,lon:p.lon};
+      await loadAll(lat,lon,true);
+      window.scrollTo({top:0,behavior:'smooth'});
     });
+    placeList.appendChild(li);
+  });
 }
-placeSearch.addEventListener('input', e=>renderList(e.target.value));
+placeSearch.addEventListener('input',e=>renderList(e.target.value));
 renderList();
 
-/* ========= WMO -> airy 圖示 slug 對應（28 組） ========= */
-const WMO_ICON_MAP = {
-  0:{label:'Clear', slug:'clear'},
-  1:{label:'Mostly Clear', slug:'mostly-clear'},
-  2:{label:'Partly Cloudy', slug:'partly-cloudy'},
-  3:{label:'Overcast', slug:'overcast'},
-  45:{label:'Fog', slug:'fog'},
-  48:{label:'Icy Fog', slug:'rime-fog'},
-  51:{label:'Light Drizzle', slug:'light-drizzle'},
-  53:{label:'Drizzle', slug:'moderate-drizzle'},
-  55:{label:'Heavy Drizzle', slug:'dense-drizzle'},
-  80:{label:'Light Showers', slug:'light-rain'},
-  81:{label:'Showers', slug:'moderate-rain'},
-  82:{label:'Heavy Showers', slug:'heavy-rain'},
-  61:{label:'Light Rain', slug:'light-rain'},
-  63:{label:'Rain', slug:'moderate-rain'},
-  65:{label:'Heavy Rain', slug:'heavy-rain'},
-  56:{label:'Light Freezing Drizzle', slug:'light-freezing-drizzle'},
-  57:{label:'Freezing Drizzle', slug:'dense-freezing-drizzle'},
-  66:{label:'Light Freezing Rain', slug:'light-freezing-rain'},
-  67:{label:'Freezing Rain', slug:'heavy-freezing-rain'},
-  71:{label:'Light Snow', slug:'slight-snowfall'},
-  73:{label:'Snow', slug:'moderate-snowfall'},
-  75:{label:'Heavy Snow', slug:'heavy-snowfall'},
-  77:{label:'Snow Grains', slug:'snowflake'},
-  85:{label:'Light Snow Showers', slug:'slight-snowfall'},
-  86:{label:'Snow Showers', slug:'heavy-snowfall'},
-  95:{label:'Thunderstorm', slug:'thunderstorm'},
-  96:{label:'Light T-storm w/ Hail', slug:'thunderstorm-with-hail'},
-  99:{label:'T-storm w/ Hail', slug:'thunderstorm-with-hail'},
-};
-const AIRY_BASE = 'https://raw.githubusercontent.com/Leftium/weather-sense/refs/heads/main/static/icons/airy';
-const EMOJI_FALLBACK = {
-  'clear':'☀️','mostly-clear':'🌤️','partly-cloudy':'⛅️','overcast':'☁️','fog':'🌫️','rime-fog':'🌫️',
-  'light-drizzle':'🌦️','moderate-drizzle':'🌦️','dense-drizzle':'🌧️',
-  'light-rain':'🌧️','moderate-rain':'🌧️','heavy-rain':'🌧️',
-  'light-freezing-drizzle':'🌨️','dense-freezing-drizzle':'🌨️',
-  'light-freezing-rain':'🌨️','heavy-freezing-rain':'🌨️',
-  'slight-snowfall':'❄️','moderate-snowfall':'❄️','heavy-snowfall':'❄️','snowflake':'❄️',
-  'thunderstorm':'⛈️','thunderstorm-with-hail':'⛈️'
-};
-function setWeatherIconByWMO(container, wmo){
-  const rec = WMO_ICON_MAP[wmo] || {label:'Unknown', slug:'overcast'};
-  const url = `${AIRY_BASE}/${rec.slug}@4x.png`;
-  container.innerHTML = '';
-  const img = document.createElement('img');
-  img.src = url;
-  img.alt = rec.label;
-  img.referrerPolicy = 'no-referrer';
-  img.onerror = () => {
-    container.innerHTML = `<span style="font-size:18px;line-height:1">${EMOJI_FALLBACK[rec.slug]||'❓'}</span>`;
-  };
-  container.appendChild(img);
-}
-
-/* ========= 中文提示語（28 筆） ========= */
-const WMO_HINT_ZH = {
-  0:'今天天氣晴朗心情好',
-  1:'天空多雲但仍舒適',
-  2:'陽光與雲朵交錯',
-  3:'陰天出門記得帶外套',
-  45:'霧氣較重，行車請小心',
-  48:'霜霧低能見度，注意安全',
-  51:'毛毛雨，出門帶把傘',
-  53:'細雨綿綿，記得防水',
-  55:'小雨偏強，外出要備雨具',
-  80:'短暫陣雨，別忘了雨傘',
-  81:'陣雨明顯，路面濕滑小心',
-  82:'強陣雨，外出請小心',
-  61:'小雨滴答，帶件薄外套',
-  63:'中雨來訪，行車放慢速度',
-  65:'大雨滂沱，留意積水',
-  56:'小冰霰／凍毛雨，路面易滑',
-  57:'凍毛雨偏強，注意結冰',
-  66:'小凍雨，請小心路滑',
-  67:'凍雨較強，當心結冰',
-  71:'小雪紛飛，注意保暖',
-  73:'中雪飄落，外出請注意',
-  75:'大雪／暴雪，交通恐受影響',
-  77:'雪粒飄落，能見度略降',
-  85:'小雪陣雪，風大時更冷',
-  86:'強陣雪，視線不佳',
-  95:'雷雨發展，遠離空曠與樹下',
-  96:'雷雨夾雹，待在室內較安全',
-  99:'強雷雨夾雹，務必注意安全'
-};
-
-/* ========= 工具 ========= */
-const kmhToBeaufort = (kmh) => {
-  const b = [1,5,11,19,28,38,49,61,74,88,102,117,9999];
-  return b.findIndex(x => kmh <= x);
-};
-const degToCompass = (deg) => {
-  const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-  return dirs[Math.round(deg/22.5)%16];
-};
-const locText = document.getElementById('locText');
-async function reverseGeocode(lat, lon){
+/* ========= 工具函式 ======================================================= */
+const kmhToBeaufort=kmh=>[1,5,11,19,28,38,49,61,74,88,102,117,9999].findIndex(x=>kmh<=x);
+const degToCompass=deg=>["北","北北東","東北","東北東","東","東南東","東南","南南東","南","南南西","西南","西南西","西","西北西","西北","北北西"][Math.round(deg/22.5)%16];
+const locText=document.getElementById('locText');
+async function reverseGeocode(lat,lon){
   try{
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=12&addressdetails=1`;
-    const res = await fetch(url, {headers:{'Accept':'application/json'}});
-    const j = await res.json();
-    return j.display_name || `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
-  }catch{
-    return `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
-  }
+    const url=`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=12&addressdetails=1`;
+    const res=await fetch(url,{headers:{'Accept':'application/json'}});
+    const j=await res.json();
+    return j.display_name||`${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+  }catch{return `${lat.toFixed(3)}, ${lon.toFixed(3)}`;}
 }
-
-/* ========= 取得座標 ========= */
-const getCoords = () => new Promise((resolve) => {
-  if (location.protocol === 'https:' || location.hostname === 'localhost') {
+const getCoords=()=>new Promise(resolve=>{
+  if(location.protocol==='https:'||location.hostname==='localhost'){
     navigator.geolocation.getCurrentPosition(
-      pos => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude}),
-      async () => {
-        try {
-          const ip = await fetch('https://ipapi.co/json/').then(r => r.json());
-          resolve({lat: ip.latitude, lon: ip.longitude});
-        } catch {
-          resolve({lat: 24.256, lon: 120.508});
-        }
+      pos=>resolve({lat:pos.coords.latitude,lon:pos.coords.longitude}),
+      async()=>{
+        try{
+          const ip=await fetch('https://ipapi.co/json/').then(r=>r.json());
+          resolve({lat:ip.latitude,lon:ip.longitude});
+        }catch{resolve({lat:24.256,lon:120.508});}
       },
-      {enableHighAccuracy:true, timeout:8000, maximumAge:60000}
+      {enableHighAccuracy:true,timeout:8000,maximumAge:60000}
     );
-  } else {
-    fetch('https://ipapi.co/json/')
-      .then(r => r.json())
-      .then(ip => resolve({lat: ip.latitude, lon: ip.longitude}))
-      .catch(() => resolve({lat: 24.256, lon: 120.508}));
+  }else{
+    fetch('https://ipapi.co/json/').then(r=>r.json()).then(ip=>resolve({lat:ip.latitude,lon:ip.longitude})).catch(()=>resolve({lat:24.256,lon:120.508}));
   }
 });
 
-/* ========= 載入資料（重用） ========= */
-async function loadAll(lat, lon, updateLocText=false){
-  try {
-    if (updateLocText) {
-      locText.textContent = '定位中…';
-      locText.textContent = await reverseGeocode(lat, lon);
-    }
+/* ========= WMO 對應 -------------------------------------------------------- */
+const WMO_ICON_MAP={0:{label:'Clear',slug:'clear'},1:{label:'Mostly Clear',slug:'mostly-clear'},2:{label:'Partly Cloudy',slug:'partly-cloudy'},3:{label:'Overcast',slug:'overcast'},45:{label:'Fog',slug:'fog'},48:{label:'Icy Fog',slug:'rime-fog'},51:{label:'Light Drizzle',slug:'light-drizzle'},53:{label:'Drizzle',slug:'moderate-drizzle'},55:{label:'Heavy Drizzle',slug:'dense-drizzle'},80:{label:'Light Showers',slug:'light-rain'},81:{label:'Showers',slug:'moderate-rain'},82:{label:'Heavy Showers',slug:'heavy-rain'},61:{label:'Light Rain',slug:'light-rain'},63:{label:'Rain',slug:'moderate-rain'},65:{label:'Heavy Rain',slug:'heavy-rain'},56:{label:'Light Freezing Drizzle',slug:'light-freezing-drizzle'},57:{label:'Freezing Drizzle',slug:'dense-freezing-drizzle'},66:{label:'Light Freezing Rain',slug:'light-freezing-rain'},67:{label:'Freezing Rain',slug:'heavy-freezing-rain'},71:{label:'Light Snow',slug:'slight-snowfall'},73:{label:'Snow',slug:'moderate-snowfall'},75:{label:'Heavy Snow',slug:'heavy-snowfall'},77:{label:'Snow Grains',slug:'snowflake'},85:{label:'Light Snow Showers',slug:'slight-snowfall'},86:{label:'Snow Showers',slug:'heavy-snowfall'},95:{label:'Thunderstorm',slug:'thunderstorm'},96:{label:'Light T-storm w/ Hail',slug:'thunderstorm-with-hail'},99:{label:'T-storm w/ Hail',slug:'thunderstorm-with-hail'}};
+const AIRY_BASE='https://raw.githubusercontent.com/Leftium/weather-sense/refs/heads/main/static/icons/airy';
+const EMOJI_FALLBACK={'clear':'☀️','mostly-clear':'🌤️','partly-cloudy':'⛅️','overcast':'☁️','fog':'🌫️','rime-fog':'🌫️','light-drizzle':'🌦️','moderate-drizzle':'🌦️','dense-drizzle':'🌧️','light-rain':'🌧️','moderate-rain':'🌧️','heavy-rain':'🌧️','light-freezing-drizzle':'🌨️','dense-freezing-drizzle':'🌨️','light-freezing-rain':'🌨️','heavy-freezing-rain':'🌨️','slight-snowfall':'❄️','moderate-snowfall':'❄️','heavy-snowfall':'❄️','snowflake':'❄️','thunderstorm':'⛈️','thunderstorm-with-hail':'⛈️'};
+function setWeatherIconByWMO(container,wmo){
+  const rec=WMO_ICON_MAP[wmo]||{label:'Unknown',slug:'overcast'};
+  const url=`${AIRY_BASE}/${rec.slug}@4x.png`;
+  container.innerHTML='';
+  const img=document.createElement('img');
+  img.src=url;img.alt=rec.label;img.referrerPolicy='no-referrer';
+  img.onerror=()=>container.innerHTML=`<span style="font-size:18px;line-height:1">${EMOJI_FALLBACK[rec.slug]||'❓'}</span>`;
+  container.appendChild(img);
+}
+const WMO_HINT_ZH={0:'今天天氣晴朗心情好',1:'天空多雲但仍舒適',2:'陽光與雲朵交錯',3:'陰天出門記得帶外套',45:'霧氣較重，行車請小心',48:'霜霧低能見度，注意安全',51:'毛毛雨，出門帶把傘',53:'細雨綿綿，記得防水',55:'小雨偏強，外出要備雨具',80:'短暫陣雨，別忘了雨傘',81:'陣雨明顯，路面濕滑小心',82:'強陣雨，外出請小心',61:'小雨滴答，帶件薄外套',63:'中雨來訪，行車放慢速度',65:'大雨滂沱，留意積水',56:'小冰霰／凍毛雨，路面易滑',57:'凍毛雨偏強，注意結冰',66:'小凍雨，請小心路滑',67:'凍雨較強，當心結冰',71:'小雪紛飛，注意保暖',73:'中雪飄落，外出請注意',75:'大雪／暴雪，交通恐受影響',77:'雪粒飄落，能見度略降',85:'小雪陣雪，風大時更冷',86:'強陣雪，視線不佳',95:'雷雨發展，遠離空曠與樹下',96:'雷雨夾雹，待在室內較安全',99:'強雷雨夾雹，務必注意安全'};
 
-    const urlForecast = new URL('https://api.open-meteo.com/v1/forecast');
-    urlForecast.search = new URLSearchParams({
-      latitude: lat, longitude: lon, timezone: 'auto',
-      current: [
-        'temperature_2m','apparent_temperature','relative_humidity_2m',
-        'uv_index','wind_speed_10m','wind_direction_10m','surface_pressure',
-        'weather_code'
-      ].join(','),
-      hourly: ['precipitation_probability'].join(','),
-      daily: ['temperature_2m_max','temperature_2m_min','sunrise','sunset','uv_index_max'].join(',')
+/* ========= 主資料載入 ===================================================== */
+async function loadAll(lat,lon,updateLocText=false){
+  try{
+    if(updateLocText){locText.textContent='定位中…';locText.textContent=await reverseGeocode(lat,lon);}
+    /* Forecast ---------------------------------------------------*/
+    const urlForecast=new URL('https://api.open-meteo.com/v1/forecast');
+    urlForecast.search=new URLSearchParams({
+      latitude:lat,longitude:lon,timezone:'auto',
+      current:['temperature_2m','apparent_temperature','relative_humidity_2m','uv_index','wind_speed_10m','wind_direction_10m','surface_pressure','weather_code'].join(','),
+      hourly:['precipitation_probability'].join(','),
+      daily:['temperature_2m_max','temperature_2m_min','sunrise','sunset','uv_index_max'].join(',')
     });
-    
-    const fRes = await fetch(urlForecast).then(r => r.json());
+    const fRes=await fetch(urlForecast).then(r=>r.json());
+    /* 溫度/濕度/降雨 */
+    document.getElementById('temp-now').textContent=Math.round(fRes.current.temperature_2m??0);
+    document.getElementById('apparent').textContent=Math.round(fRes.current.apparent_temperature??0);
+    document.getElementById('humidity').textContent=(fRes.current.relative_humidity_2m??0)+'%';
+    /* 天氣圖示 & 提示 */
+    const wmo=Number(fRes.current.weather_code??-1);
+    setWeatherIconByWMO(document.getElementById('weatherIcon'),wmo);
+    document.getElementById('weather-hint').textContent=WMO_HINT_ZH[wmo]||'天氣更新中';
+    /* UV */
+    const uv=Number(fRes.current.uv_index??0);
+    document.getElementById('uv-index').textContent=uv.toFixed(0);
+    document.getElementById('uv-hint').textContent='指數即時值';
+    document.getElementById('uv-pin').style.left=Math.min(100,(uv/11)*100)+'%';
+    /* hi/lo 溫度 */
+    const hi=fRes.daily?.temperature_2m_max?.[0],lo=fRes.daily?.temperature_2m_min?.[0];
+    if(hi!=null)document.getElementById('temp-hi').textContent=Math.round(hi);
+    if(lo!=null)document.getElementById('temp-lo').textContent=Math.round(lo);
+    /* 降雨機率 */
+    const pp=fRes.hourly?.precipitation_probability?.[0];
+    if(pp!=null)document.getElementById('precip-prob').textContent=pp+'%';
+    /* 風速/風向 */
+    const ws=fRes.current.wind_speed_10m??0,wd=fRes.current.wind_direction_10m??0;
+    document.getElementById('wind-speed').textContent=Math.round(ws)+' 公里/h';
+    document.getElementById('wind-dir').textContent=degToCompass(wd)+' '+Math.round(wd)+'°';
+    document.getElementById('wind-beaufort').textContent=kmhToBeaufort(ws)+'級';
+    document.getElementById('wind-hint').textContent='即時風況';
+    animateNeedle(wd);   /* 風向動畫 */
 
-    // 溫度 / 其他
-    document.getElementById('temp-now').textContent = Math.round(fRes.current.temperature_2m ?? 0);
-    document.getElementById('apparent').textContent = Math.round(fRes.current.apparent_temperature ?? 0);
-    document.getElementById('humidity').textContent = (fRes.current.relative_humidity_2m ?? 0) + '%';
-
-    // 天氣圖示 + 提示語
-    const wmo = Number(fRes.current.weather_code ?? -1);
-    setWeatherIconByWMO(document.getElementById('weatherIcon'), wmo);
-    document.getElementById('weather-hint').textContent = WMO_HINT_ZH[wmo] || '天氣更新中';
-
-    // UV
-    document.getElementById('uv-index').textContent = (fRes.current.uv_index ?? 0).toFixed(0);
-    document.getElementById('uv-hint').textContent = '指數即時值';
-    const uv = Number(fRes.current.uv_index ?? 0);
-    document.getElementById('uv-pin').style.left = Math.min(100, (uv/11)*100) + '%';
-
-    // hi/lo
-    const hi = fRes.daily?.temperature_2m_max?.[0];
-    const lo = fRes.daily?.temperature_2m_min?.[0];
-    if (hi != null) document.getElementById('temp-hi').textContent = Math.round(hi);
-    if (lo != null) document.getElementById('temp-lo').textContent = Math.round(lo);
-
-    // 降雨機率（抓最近一筆）
-    const pp = fRes.hourly?.precipitation_probability?.[0];
-    if (pp != null) document.getElementById('precip-prob').textContent = pp + '%';
-
-    // 風
-    const ws = fRes.current.wind_speed_10m ?? 0;
-    const wd = fRes.current.wind_direction_10m ?? 0;
-    document.getElementById('wind-speed').textContent = Math.round(ws) + ' 公里/h';
-    document.getElementById('wind-dir').textContent = degToCompass(wd) + ' ' + Math.round(wd) + '°';
-    document.getElementById('wind-beaufort').textContent = kmhToBeaufort(ws) + '級';
-    document.getElementById('wind-hint').textContent = '即時風況';
-
-    // 氣壓
-    const sp = fRes.current.surface_pressure;
-    if (sp != null) document.getElementById('pressure').textContent = Math.round(sp);
-    document.getElementById('press-hint').textContent = '即時氣壓';
-
-    // 日出
-    const nextSunrise = fRes.daily?.sunrise?.[1] || fRes.daily?.sunrise?.[0];
-    if (nextSunrise) {
-      const t = new Date(nextSunrise);
-      const hh = String(t.getHours()).padStart(2,'0');
-      const mm = String(t.getMinutes()).padStart(2,'0');
-      document.getElementById('sunrise-next').textContent = `${hh}:${mm}`;
-      document.getElementById('sun-hint').textContent = '夜深了，等待下次日出';
+    /* 氣壓 */
+    const sp=fRes.current.surface_pressure;
+    if(sp!=null)document.getElementById('pressure').textContent=Math.round(sp);
+    document.getElementById('press-hint').textContent='即時氣壓';
+    /* 日出 */
+    const nextSunrise=fRes.daily?.sunrise?.[1]||fRes.daily?.sunrise?.[0];
+    if(nextSunrise){
+      const t=new Date(nextSunrise),hh=String(t.getHours()).padStart(2,'0'),mm=String(t.getMinutes()).padStart(2,'0');
+      document.getElementById('sunrise-next').textContent=`${hh}:${mm}`;
+      document.getElementById('sun-hint').textContent='夜深了，等待下次日出';
     }
-  } catch (e) {
-    document.getElementById('weather-hint').textContent = '天氣資料取得失敗';
-    document.getElementById('wind-hint').textContent = '資料載入失敗';
-    document.getElementById('press-hint').textContent = '資料載入失敗';
-    document.getElementById('sun-hint').textContent = '資料載入失敗';
-    console.error('forecast error', e);
+  }catch(e){
+    document.getElementById('weather-hint').textContent='天氣資料取得失敗';
+    document.getElementById('wind-hint').textContent='資料載入失敗';
+    document.getElementById('press-hint').textContent='資料載入失敗';
+    document.getElementById('sun-hint').textContent='資料載入失敗';
+    console.error('forecast error',e);
   }
-
-  // 海況
-  try {
-    const urlMarine = new URL('https://marine-api.open-meteo.com/v1/marine');
-    urlMarine.search = new URLSearchParams({
-      latitude: lat, longitude: lon, timezone: 'auto', cell_selection: 'sea',
-      current: ['ocean_current_velocity','ocean_current_direction','sea_surface_temperature','wave_height','wave_direction'].join(',')
+  /* Marine -------------------------------------------------------*/
+  try{
+    const urlMarine=new URL('https://marine-api.open-meteo.com/v1/marine');
+    urlMarine.search=new URLSearchParams({
+      latitude:lat,longitude:lon,timezone:'auto',cell_selection:'sea',
+      current:['ocean_current_velocity','ocean_current_direction','sea_surface_temperature','wave_height','wave_direction'].join(',')
     });
-    const mRes = await fetch(urlMarine).then(r => r.json());
-    const cur = mRes.current || {};
-    const curMs = (cur.ocean_current_velocity ?? 0);
-    const curMsVal = (curMs * 1000 / 3600);
-    document.getElementById('wave-current').textContent = curMsVal.toFixed(1);
-
-    const sst = cur.sea_surface_temperature;
-    if (sst != null) document.getElementById('sea-temp').textContent = Math.round(sst);
-    document.getElementById('current-speed').textContent = curMsVal.toFixed(1);
-
-    const wdir = cur.wave_direction ?? 0;
-    const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-    const compass = dirs[Math.round(wdir/22.5)%16];
-    document.getElementById('wave-dir').textContent = `${Math.round(wdir)}°·${compass}`;
-
-    document.getElementById('wave-hint').textContent = '水面平靜，是最佳垂釣時機？';
-  } catch (e) {
-    document.getElementById('wave-hint').textContent = '海況資料取得失敗';
-    console.error('marine error', e);
+    const mRes=await fetch(urlMarine).then(r=>r.json());
+    const cur=mRes.current||{},curMs=(cur.ocean_current_velocity??0),curMsVal=curMs*1000/3600;
+    document.getElementById('wave-current').textContent=curMsVal.toFixed(1);
+    const sst=cur.sea_surface_temperature;
+    if(sst!=null)document.getElementById('sea-temp').textContent=Math.round(sst);
+    document.getElementById('current-speed').textContent=curMsVal.toFixed(1);
+    const wdir=cur.wave_direction??0,compass=degToCompass(wdir);
+    document.getElementById('wave-dir').textContent=`${Math.round(wdir)}° ${compass}`;
+    document.getElementById('wave-hint').textContent='水面平靜，是最佳垂釣時機？';
+  }catch(e){
+    document.getElementById('wave-hint').textContent='海況資料取得失敗';
+    console.error('marine error',e);
   }
 }
 
-/* ========= 初始化 ========= */
-(async function init(){
-  const {lat, lon} = await getCoords();
-  locText.textContent = await reverseGeocode(lat, lon);
-  await loadAll(lat, lon);
+/* ========= 初始化 ========================================================= */
+(async()=>{
+  const {lat,lon}=await getCoords();
+  locText.textContent=await reverseGeocode(lat,lon);
+  await loadAll(lat,lon);
 })();
 </script>
 </body>
