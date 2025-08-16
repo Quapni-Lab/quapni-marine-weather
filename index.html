@@ -256,12 +256,18 @@ body{
     </section>
     <!-- 日落 / 日出 ----------------------------------------------------------->
     <section class="card" id="card-sun">
-      <div class="header"><div class="header-left"><img src="assets/images/Icon_sun.png" alt="" style="width:16px;height:10px;"><span>日落</span></div><div class="chev">›</div></div>
+      <div class="header">
+        <div class="header-left">
+          <img src="assets/images/Icon_sun.png" alt="" style="width:16px;height:10px;">
+          <span id="sun-header-label">日落</span>
+        </div>
+        <div class="chev">›</div>
+      </div>
       <div class="hint" id="sun-hint">資料載入中…</div>
       <div style="margin-top:10px;display:flex;justify-content:center;">
         <img class="dial" src="assets/images/Dashboardmockup_sun.png" width="120" alt="">
       </div>
-      <div style="margin-top:8px;font-size:12px;">下次日出：<span id="sunrise-next">—</span></div>
+      <div id="sun-next-line" style="margin-top:8px;font-size:12px;">下次日出：<span id="sun-next-time">—</span></div>
     </section>
   </div>
 </div>
@@ -298,30 +304,26 @@ body{
 </nav>
 
 <script>
-  /* ========= 風向儀動畫 ===================================================== */
-  let currentNeedleAngle = 0;
-
-  function updateNeedle(angle){
-    const svg = document.getElementById('windRose').contentDocument;
-    if (!svg) return;                           // 若極端情況仍未載入則直接略過
-    svg.querySelectorAll('.st0').forEach(el=>{
-      el.setAttribute('transform', `rotate(${angle % 360} 100 100)`);
-    });
+/* ========= 風向儀動畫 ===================================================== */
+let currentNeedleAngle = 0;
+function updateNeedle(angle){
+  const svg = document.getElementById('windRose').contentDocument;
+  if(!svg) return;
+  svg.querySelectorAll('.st0').forEach(el=>{
+    el.setAttribute('transform',`rotate(${(angle)%360} 100 100)`);
+  });
+}
+function animateNeedle(target){
+  const shortest=((target-currentNeedleAngle+540)%360)-180;
+  const start=performance.now(),dur=800;
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  function step(now){
+    const p=Math.min(1,(now-start)/dur);
+    updateNeedle(currentNeedleAngle+shortest*ease(p));
+    if(p<1)requestAnimationFrame(step);else currentNeedleAngle=target;
   }
-  
-  function animateNeedle(target){
-    const shortest = ((target - currentNeedleAngle + 540) % 360) - 180;
-    const start = performance.now(), dur = 800;
-    const ease = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
-  
-    function step(now){
-      const p = Math.min(1, (now - start) / dur);
-      updateNeedle(currentNeedleAngle + shortest * ease(p));
-      if (p < 1) requestAnimationFrame(step);
-      else currentNeedleAngle = target;
-    }
-    requestAnimationFrame(step);
-  }
+  requestAnimationFrame(step);
+}
 
 /* ========= Navbar Active 標示 ============================================= */
 document.querySelectorAll('.nav-item').forEach(btn=>{
@@ -406,7 +408,20 @@ const getCoords=()=>new Promise(resolve=>{
   }
 });
 
-/* ========= WMO 對應 -------------------------------------------------------- */
+/* ========= 時段提示（依附圖，不重疊分段） ================================ */
+function getPeriodHint(date){
+  const m = date.getHours()*60 + date.getMinutes();
+  if (m < 240)   return '深夜寧靜，適合思考或入眠。';  // 00:00–04:00
+  if (m < 360)   return '晨曦初現，萬物甦醒。';        // 04:00–06:00
+  if (m < 480)   return '天光乍現，新的一天開始。';  // 06:00–08:00
+  if (m < 660)   return '朝氣蓬勃，是活動的時段。';  // 08:00–11:00
+  if (m < 780)   return '日正當中，溫度逐漸升高。';  // 11:00–13:00
+  if (m < 960)   return '午後時段，適合輕活動。';    // 13:00–16:00
+  if (m < 1140)  return '夕陽西下，光影溫柔。';      // 16:00–19:00
+  return '燈火初上，靜享夜色。';                      // 19:00–24:00
+}
+
+/* ========= WMO 對應（圖示/提示） ========================================= */
 const WMO_ICON_MAP={0:{label:'Clear',slug:'clear'},1:{label:'Mostly Clear',slug:'mostly-clear'},2:{label:'Partly Cloudy',slug:'partly-cloudy'},3:{label:'Overcast',slug:'overcast'},45:{label:'Fog',slug:'fog'},48:{label:'Icy Fog',slug:'rime-fog'},51:{label:'Light Drizzle',slug:'light-drizzle'},53:{label:'Drizzle',slug:'moderate-drizzle'},55:{label:'Heavy Drizzle',slug:'dense-drizzle'},80:{label:'Light Showers',slug:'light-rain'},81:{label:'Showers',slug:'moderate-rain'},82:{label:'Heavy Showers',slug:'heavy-rain'},61:{label:'Light Rain',slug:'light-rain'},63:{label:'Rain',slug:'moderate-rain'},65:{label:'Heavy Rain',slug:'heavy-rain'},56:{label:'Light Freezing Drizzle',slug:'light-freezing-drizzle'},57:{label:'Freezing Drizzle',slug:'dense-freezing-drizzle'},66:{label:'Light Freezing Rain',slug:'light-freezing-rain'},67:{label:'Freezing Rain',slug:'heavy-freezing-rain'},71:{label:'Light Snow',slug:'slight-snowfall'},73:{label:'Snow',slug:'moderate-snowfall'},75:{label:'Heavy Snow',slug:'heavy-snowfall'},77:{label:'Snow Grains',slug:'snowflake'},85:{label:'Light Snow Showers',slug:'slight-snowfall'},86:{label:'Snow Showers',slug:'heavy-snowfall'},95:{label:'Thunderstorm',slug:'thunderstorm'},96:{label:'Light T-storm w/ Hail',slug:'thunderstorm-with-hail'},99:{label:'T-storm w/ Hail',slug:'thunderstorm-with-hail'}};
 const AIRY_BASE='https://raw.githubusercontent.com/Leftium/weather-sense/refs/heads/main/static/icons/airy';
 const EMOJI_FALLBACK={'clear':'☀️','mostly-clear':'🌤️','partly-cloudy':'⛅️','overcast':'☁️','fog':'🌫️','rime-fog':'🌫️','light-drizzle':'🌦️','moderate-drizzle':'🌦️','dense-drizzle':'🌧️','light-rain':'🌧️','moderate-rain':'🌧️','heavy-rain':'🌧️','light-freezing-drizzle':'🌨️','dense-freezing-drizzle':'🌨️','light-freezing-rain':'🌨️','heavy-freezing-rain':'🌨️','slight-snowfall':'❄️','moderate-snowfall':'❄️','heavy-snowfall':'❄️','snowflake':'❄️','thunderstorm':'⛈️','thunderstorm-with-hail':'⛈️'};
@@ -415,64 +430,100 @@ function setWeatherIconByWMO(container,wmo){
   const url=`${AIRY_BASE}/${rec.slug}@4x.png`;
   container.innerHTML='';
   const img=document.createElement('img');
-  img.src=url;img.alt=rec.label;img.referrerPolicy='no-referrer';
-  img.onerror=()=>container.innerHTML=`<span style="font-size:18px;line-height:1">${EMOJI_FALLBACK[rec.slug]||'❓'}</span>`;
+  img.src=url; img.alt=rec.label; img.referrerPolicy='no-referrer';
+  img.onerror=()=>{container.innerHTML=`<span style="font-size:18px;line-height:1">${EMOJI_FALLBACK[rec.slug]||'❓'}</span>`;};
   container.appendChild(img);
 }
 const WMO_HINT_ZH={0:'今天天氣晴朗心情好',1:'天空多雲但仍舒適',2:'陽光與雲朵交錯',3:'陰天出門記得帶外套',45:'霧氣較重，行車請小心',48:'霜霧低能見度，注意安全',51:'毛毛雨，出門帶把傘',53:'細雨綿綿，記得防水',55:'小雨偏強，外出要備雨具',80:'短暫陣雨，別忘了雨傘',81:'陣雨明顯，路面濕滑小心',82:'強陣雨，外出請小心',61:'小雨滴答，帶件薄外套',63:'中雨來訪，行車放慢速度',65:'大雨滂沱，留意積水',56:'小冰霰／凍毛雨，路面易滑',57:'凍毛雨偏強，注意結冰',66:'小凍雨，請小心路滑',67:'凍雨較強，當心結冰',71:'小雪紛飛，注意保暖',73:'中雪飄落，外出請注意',75:'大雪／暴雪，交通恐受影響',77:'雪粒飄落，能見度略降',85:'小雪陣雪，風大時更冷',86:'強陣雪，視線不佳',95:'雷雨發展，遠離空曠與樹下',96:'雷雨夾雹，待在室內較安全',99:'強雷雨夾雹，務必注意安全'};
 
-/* ========= 主資料載入 ===================================================== */
+/* ========= 主資料載入（統一撈） ========================================= */
 async function loadAll(lat,lon,updateLocText=false){
   try{
     if(updateLocText){locText.textContent='定位中…';locText.textContent=await reverseGeocode(lat,lon);}
-    /* Forecast ---------------------------------------------------*/
     const urlForecast=new URL('https://api.open-meteo.com/v1/forecast');
     urlForecast.search=new URLSearchParams({
-      latitude:lat,longitude:lon,timezone:'auto',
+      latitude:lat, longitude:lon, timezone:'auto',
       current:['temperature_2m','apparent_temperature','relative_humidity_2m','uv_index','wind_speed_10m','wind_direction_10m','surface_pressure','weather_code'].join(','),
       hourly:['precipitation_probability'].join(','),
       daily:['temperature_2m_max','temperature_2m_min','sunrise','sunset','uv_index_max'].join(',')
     });
     const fRes=await fetch(urlForecast).then(r=>r.json());
-    /* 溫度/濕度/降雨 */
+
+    /* 溫度/濕度 */
     document.getElementById('temp-now').textContent=Math.round(fRes.current.temperature_2m??0);
     document.getElementById('apparent').textContent=Math.round(fRes.current.apparent_temperature??0);
     document.getElementById('humidity').textContent=(fRes.current.relative_humidity_2m??0)+'%';
-    /* 天氣圖示 & 提示 */
+
+    /* 天氣圖示與提示 */
     const wmo=Number(fRes.current.weather_code??-1);
-    setWeatherIconByWMO(document.getElementById('weatherIcon'),wmo);
+    setWeatherIconByWMO(document.getElementById('weatherIcon'), wmo);
     document.getElementById('weather-hint').textContent=WMO_HINT_ZH[wmo]||'天氣更新中';
+
     /* UV */
     const uv=Number(fRes.current.uv_index??0);
     document.getElementById('uv-index').textContent=uv.toFixed(0);
     document.getElementById('uv-hint').textContent='指數即時值';
     document.getElementById('uv-pin').style.left=Math.min(100,(uv/11)*100)+'%';
-    /* hi/lo 溫度 */
-    const hi=fRes.daily?.temperature_2m_max?.[0],lo=fRes.daily?.temperature_2m_min?.[0];
+
+    /* hi/lo */
+    const hi=fRes.daily?.temperature_2m_max?.[0], lo=fRes.daily?.temperature_2m_min?.[0];
     if(hi!=null)document.getElementById('temp-hi').textContent=Math.round(hi);
     if(lo!=null)document.getElementById('temp-lo').textContent=Math.round(lo);
-    /* 降雨機率 */
+
+    /* 降雨機率（最近一筆） */
     const pp=fRes.hourly?.precipitation_probability?.[0];
     if(pp!=null)document.getElementById('precip-prob').textContent=pp+'%';
-    /* 風速/風向 */
-    const ws=fRes.current.wind_speed_10m??0,wd=fRes.current.wind_direction_10m??0;
+
+    /* 風 */
+    const ws=fRes.current.wind_speed_10m??0;
+    const wd=fRes.current.wind_direction_10m??0;
     document.getElementById('wind-speed').textContent=Math.round(ws)+' 公里/h';
     document.getElementById('wind-dir').textContent=degToCompass(wd)+' '+Math.round(wd)+'°';
     document.getElementById('wind-beaufort').textContent=kmhToBeaufort(ws)+'級';
     document.getElementById('wind-hint').textContent='即時風況';
-    animateNeedle(wd);   /* 風向動畫 */
+    animateNeedle(wd);
 
     /* 氣壓 */
     const sp=fRes.current.surface_pressure;
     if(sp!=null)document.getElementById('pressure').textContent=Math.round(sp);
     document.getElementById('press-hint').textContent='即時氣壓';
-    /* 日出 */
-    const nextSunrise=fRes.daily?.sunrise?.[1]||fRes.daily?.sunrise?.[0];
-    if(nextSunrise){
-      const t=new Date(nextSunrise),hh=String(t.getHours()).padStart(2,'0'),mm=String(t.getMinutes()).padStart(2,'0');
-      document.getElementById('sunrise-next').textContent=`${hh}:${mm}`;
-      document.getElementById('sun-hint').textContent='夜深了，等待下次日出';
+
+    /* ===== 日出/日落卡片（依現在狀態切換） ===== */
+    const now=new Date();
+    const srToday = fRes.daily?.sunrise?.[0] ? new Date(fRes.daily.sunrise[0]) : null;
+    const ssToday = fRes.daily?.sunset?.[0]  ? new Date(fRes.daily.sunset[0])  : null;
+    const srTomorrow = fRes.daily?.sunrise?.[1] ? new Date(fRes.daily.sunrise[1]) : null;
+
+    if (srToday && ssToday){
+      let headerText, nextLabel, nextTime;
+      if (now >= srToday && now < ssToday){
+        // 已日出（白天）→ 顯示「日落」
+        headerText='日落';
+        nextLabel='下次日落：';
+        nextTime=ssToday;
+      }else{
+        // 已日落（夜間或日出前）→ 顯示「日出」
+        headerText='日出';
+        nextLabel='下次日出：';
+        nextTime = (now < srToday ? srToday : (srTomorrow || srToday));
+      }
+      const hh=String(nextTime.getHours()).padStart(2,'0');
+      const mm=String(nextTime.getMinutes()).padStart(2,'0');
+      document.getElementById('sun-header-label').textContent = headerText;
+      document.getElementById('sun-next-line').innerHTML = `${nextLabel}<span id="sun-next-time">${hh}:${mm}</span>`;
+      document.getElementById('sun-hint').textContent = getPeriodHint(now);
+    }else{
+      // 後備：若缺資料就維持原本「下次日出」
+      const ns=fRes.daily?.sunrise?.[1]||fRes.daily?.sunrise?.[0];
+      if(ns){
+        const t=new Date(ns); const hh=String(t.getHours()).padStart(2,'0'); const mm=String(t.getMinutes()).padStart(2,'0');
+        document.getElementById('sun-header-label').textContent='日出';
+        document.getElementById('sun-next-line').innerHTML=`下次日出：<span id="sun-next-time">${hh}:${mm}</span>`;
+        document.getElementById('sun-hint').textContent=getPeriodHint(new Date());
+      }
     }
+    /* ===== /日出日落卡片 ===== */
+
   }catch(e){
     document.getElementById('weather-hint').textContent='天氣資料取得失敗';
     document.getElementById('wind-hint').textContent='資料載入失敗';
@@ -480,7 +531,8 @@ async function loadAll(lat,lon,updateLocText=false){
     document.getElementById('sun-hint').textContent='資料載入失敗';
     console.error('forecast error',e);
   }
-  /* Marine -------------------------------------------------------*/
+
+  /* 海況 -------------------------------------------------------*/
   try{
     const urlMarine=new URL('https://marine-api.open-meteo.com/v1/marine');
     urlMarine.search=new URLSearchParams({
@@ -488,13 +540,19 @@ async function loadAll(lat,lon,updateLocText=false){
       current:['ocean_current_velocity','ocean_current_direction','sea_surface_temperature','wave_height','wave_direction'].join(',')
     });
     const mRes=await fetch(urlMarine).then(r=>r.json());
-    const cur=mRes.current||{},curMs=(cur.ocean_current_velocity??0),curMsVal=curMs*1000/3600;
+    const cur=mRes.current||{};
+    const curMs=(cur.ocean_current_velocity??0);
+    const curMsVal=curMs*1000/3600;
     document.getElementById('wave-current').textContent=curMsVal.toFixed(1);
+
     const sst=cur.sea_surface_temperature;
     if(sst!=null)document.getElementById('sea-temp').textContent=Math.round(sst);
     document.getElementById('current-speed').textContent=curMsVal.toFixed(1);
-    const wdir=cur.wave_direction??0,compass=degToCompass(wdir);
+
+    const wdir=cur.wave_direction??0;
+    const compass=degToCompass(wdir);
     document.getElementById('wave-dir').textContent=`${Math.round(wdir)}° ${compass}`;
+
     document.getElementById('wave-hint').textContent='水面平靜，是最佳垂釣時機？';
   }catch(e){
     document.getElementById('wave-hint').textContent='海況資料取得失敗';
