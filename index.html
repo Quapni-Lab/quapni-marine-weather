@@ -144,24 +144,29 @@ body{
       <div class="sub">良好！魚群活躍</div>
       <div class="row">
         <div class="periods">
-          <div class="period"><span class="muted">主要活躍期</span>清晨7:31–上午10:01</div>
-          <div class="period"><span class="muted">次級活躍期</span>清晨1:55–凌晨3:35</div>
+          <div class="period"><span class="muted">主要活躍期</span>-</div>
+          <div class="period"><span class="muted">次級活躍期</span>-</div>
         </div>
         <img class="dial" src="assets/images/Dashboardmockup__fishinindex.png" alt="">
       </div>
     </section>
-    <!-- 潮汐 ----------------------------------------------------------------->
+
+    <!-- 潮汐（open-meteo） --------------------------------------------------->
     <section class="card tide">
-      <div class="header"><div class="header-left"><img src="assets/images/Icon_tide.png" alt=""><span>潮汐</span></div><div class="chev">›</div></div>
-      <div class="hint">退潮中，明天再釣魚吧</div>
-      <div class="main">0.19 m</div>
+      <div class="header">
+        <div class="header-left"><img src="assets/images/Icon_tide.png" alt=""><span>潮汐</span></div>
+        <div class="chev">›</div>
+      </div>
+      <div class="hint" id="tide-hint">資料載入中…</div>
+      <div class="main"><span id="tide-current">--</span> <span style="font-size:18px;">m</span></div>
       <div class="kvlist">
-        <div class="kv"><div class="left"><span class="label">下次乾潮時間</span></div><span class="value">—</span></div>
-        <div class="kv"><div class="left"><span class="label">下次乾潮高度</span></div><span class="value neg">—</span></div>
-        <div class="kv"><div class="left"><span class="label">下次滿潮時間</span></div><span class="value">—</span></div>
-        <div class="kv"><div class="left"><span class="label">下次滿潮高度</span></div><span class="value pos">—</span></div>
+        <div class="kv"><div class="left"><span class="label">下次乾潮時間</span></div><span class="value" id="tide-next-low-time">—</span></div>
+        <div class="kv"><div class="left"><span class="label">下次乾潮高度</span></div><span class="value neg" id="tide-next-low-height">—</span></div>
+        <div class="kv"><div class="left"><span class="label">下次滿潮時間</span></div><span class="value" id="tide-next-high-time">—</span></div>
+        <div class="kv"><div class="left"><span class="label">下次滿潮高度</span></div><span class="value pos" id="tide-next-high-height">—</span></div>
       </div>
     </section>
+
     <!-- 天氣 ----------------------------------------------------------------->
     <section class="card weather" id="card-weather">
       <div class="header"><div class="header-left"><span>天氣</span></div><div class="chev">›</div></div>
@@ -186,6 +191,7 @@ body{
         </div>
       </div>
     </section>
+
     <!-- 浪況 ----------------------------------------------------------------->
     <section class="card wave" id="card-wave">
       <div class="header"><div class="header-left"><img src="assets/images/Icon_wave.png" alt=""><span>浪況</span></div><div class="chev">›</div></div>
@@ -206,12 +212,12 @@ body{
         </div>
       </div>
     </section>
+
     <!-- 風 ------------------------------------------------------------------->
     <section class="card wind" id="card-wind">
       <div class="header"><div class="header-left"><img src="assets/images/icon_wind.png" alt=""><span>風</span></div><div class="chev">›</div></div>
       <div class="hint" id="wind-hint">資料載入中…</div>
       <div class="dialwrap">
-        <!-- SVG 以 object 引入，方便存取 DOM -->
         <object id="windRose" class="rose" data="assets/images/dashboardMockup_wind.svg" type="image/svg+xml"></object>
         <div class="center">
           <div class="lvl" id="wind-beaufort">—級</div>
@@ -220,6 +226,7 @@ body{
         </div>
       </div>
     </section>
+
     <!-- 紫外線 --------------------------------------------------------------->
     <section class="card uv" id="card-uv">
       <div class="header"><div class="header-left"><img src="assets/images/Icon_uv.png" alt=""><span>紫外線</span></div><div class="chev">›</div></div>
@@ -227,6 +234,7 @@ body{
       <div class="main" id="uv-index">0</div>
       <div class="uvbar"><span class="pin" id="uv-pin" aria-hidden="true"></span></div>
     </section>
+
     <!-- 氣壓 ----------------------------------------------------------------->
     <section class="card pressure" id="card-pressure">
       <div class="header"><div class="header-left"><img src="assets/images/Icon_surface_pressure.png" alt="" style="width:14px;height:14px;"><span>氣壓</span></div><div class="chev">›</div></div>
@@ -241,6 +249,7 @@ body{
         <div class="range"><span>低</span><span>高</span></div>
       </div>
     </section>
+
     <!-- 月相 ----------------------------------------------------------------->
     <section class="card moon">
       <div class="header"><div class="header-left"><span>月相</span></div><div class="chev">›</div></div>
@@ -254,6 +263,7 @@ body{
         </div>
       </div>
     </section>
+
     <!-- 日落 / 日出 ----------------------------------------------------------->
     <section class="card" id="card-sun">
       <div class="header">
@@ -379,9 +389,57 @@ function renderList(kw=''){
 placeSearch.addEventListener('input',e=>renderList(e.target.value));
 renderList();
 
-/* ========= 工具函式 ======================================================= */
+/* ========= 工具函式（提示詞對應） ======================================= */
 const kmhToBeaufort=kmh=>[1,5,11,19,28,38,49,61,74,88,102,117,9999].findIndex(x=>kmh<=x);
 const degToCompass=deg=>["北","北北東","東北","東北東","東","東南東","東南","南南東","南","南南西","西南","西南西","西","西北西","西北","北北西"][Math.round(deg/22.5)%16];
+
+const tideHintByHeight=h=>{
+  const x=Math.max(0, h); // 負值視為 0
+  if(x<=0.5) return '海灘範圍寬，適合沿岸走走';
+  if(x<=1.5) return '岸邊活動舒適，留意浪花';
+  if(x<=2.5) return '岸邊注意腳下安全';
+  if(x<=3.5) return '建議保持與水邊適當距離';
+  return '請避免站在浪拍打的區域';
+};
+
+const waveHintByHeight=h=>{
+  if(h==null) return '海況更新中';
+  if(h<=0.5) return '海面平靜，適合岸邊散步。';
+  if(h<=1.0) return '海面微有波動，岸邊活動舒適。';
+  if(h<=1.5) return '浪高增加，留意安全。';
+  if(h<=2.5) return '浪高偏高，岸邊活動保持距離。';
+  return '浪勢明顯，避免靠近海浪拍打區。';
+};
+
+const windHintByBeaufort=b=>{
+  return [
+    '幾乎無風，空氣靜止',            // 0
+    '微風輕拂，幾乎感受不到',        // 1
+    '微風輕柔，葉子輕輕擺動',        // 2
+    '小風擾動，樹梢微微擺動',        // 3
+    '微強的風，小心帽子飛走',        // 4
+    '中等強風，注意保暖防護',        // 5
+    '強風來襲，戶外活動小心',        // 6
+    '烈風明顯，可能行走困難',        // 7
+    '烈風增強，戶外活動不建議',      // 8
+    '請待在室內確保安全'             // 9+
+  ][Math.min(b,9)];
+};
+
+const uvHintByIndex=u=>{
+  if(u<=2) return '幾乎不用擔心曬傷';
+  if(u<=5) return '記得戴帽防曬';
+  if(u<=7) return '應多補擦防曬';
+  if(u<=10) return '防曬衣物不可少';
+  return '建議縮短戶外時間';
+};
+
+const pressureHintByHpa=p=>{
+  if(p>1015) return '天氣穩定，適合戶外走走';
+  if(p>=1005) return '氣壓平衡，空氣清爽';
+  return '天氣微陰，留意身體狀況';
+};
+
 const locText=document.getElementById('locText');
 async function reverseGeocode(lat,lon){
   try{
@@ -440,6 +498,8 @@ const WMO_HINT_ZH={0:'今天天氣晴朗心情好',1:'天空多雲但仍舒適',
 async function loadAll(lat,lon,updateLocText=false){
   try{
     if(updateLocText){locText.textContent='定位中…';locText.textContent=await reverseGeocode(lat,lon);}
+
+    /* ---- 天氣（陸地） ---- */
     const urlForecast=new URL('https://api.open-meteo.com/v1/forecast');
     urlForecast.search=new URLSearchParams({
       latitude:lat, longitude:lon, timezone:'auto',
@@ -459,10 +519,10 @@ async function loadAll(lat,lon,updateLocText=false){
     setWeatherIconByWMO(document.getElementById('weatherIcon'), wmo);
     document.getElementById('weather-hint').textContent=WMO_HINT_ZH[wmo]||'天氣更新中';
 
-    /* UV */
+    /* UV（指數與提示） */
     const uv=Number(fRes.current.uv_index??0);
     document.getElementById('uv-index').textContent=uv.toFixed(0);
-    document.getElementById('uv-hint').textContent='指數即時值';
+    document.getElementById('uv-hint').textContent=uvHintByIndex(uv);
     document.getElementById('uv-pin').style.left=Math.min(100,(uv/11)*100)+'%';
 
     /* hi/lo */
@@ -474,19 +534,20 @@ async function loadAll(lat,lon,updateLocText=false){
     const pp=fRes.hourly?.precipitation_probability?.[0];
     if(pp!=null)document.getElementById('precip-prob').textContent=pp+'%';
 
-    /* 風 */
-    const ws=fRes.current.wind_speed_10m??0;
+    /* 風：Beaufort 與提示 */
+    const ws=fRes.current.wind_speed_10m??0;  // km/h
     const wd=fRes.current.wind_direction_10m??0;
+    const bft=kmhToBeaufort(ws);
     document.getElementById('wind-speed').textContent=Math.round(ws)+' 公里/h';
     document.getElementById('wind-dir').textContent=degToCompass(wd)+' '+Math.round(wd)+'°';
-    document.getElementById('wind-beaufort').textContent=kmhToBeaufort(ws)+'級';
-    document.getElementById('wind-hint').textContent='即時風況';
+    document.getElementById('wind-beaufort').textContent=bft+'級';
+    document.getElementById('wind-hint').textContent=windHintByBeaufort(bft);
     animateNeedle(wd);
 
-    /* 氣壓 */
+    /* 氣壓：數值與提示 */
     const sp=fRes.current.surface_pressure;
     if(sp!=null)document.getElementById('pressure').textContent=Math.round(sp);
-    document.getElementById('press-hint').textContent='即時氣壓';
+    document.getElementById('press-hint').textContent=pressureHintByHpa(sp??1013);
 
     /* ===== 日出/日落卡片（依現在狀態切換） ===== */
     const now=new Date();
@@ -497,14 +558,9 @@ async function loadAll(lat,lon,updateLocText=false){
     if (srToday && ssToday){
       let headerText, nextLabel, nextTime;
       if (now >= srToday && now < ssToday){
-        // 已日出（白天）→ 顯示「日落」
-        headerText='日落';
-        nextLabel='下次日落：';
-        nextTime=ssToday;
+        headerText='日落'; nextLabel='下次日落：'; nextTime=ssToday;
       }else{
-        // 已日落（夜間或日出前）→ 顯示「日出」
-        headerText='日出';
-        nextLabel='下次日出：';
+        headerText='日出'; nextLabel='下次日出：';
         nextTime = (now < srToday ? srToday : (srTomorrow || srToday));
       }
       const hh=String(nextTime.getHours()).padStart(2,'0');
@@ -513,7 +569,6 @@ async function loadAll(lat,lon,updateLocText=false){
       document.getElementById('sun-next-line').innerHTML = `${nextLabel}<span id="sun-next-time">${hh}:${mm}</span>`;
       document.getElementById('sun-hint').textContent = getPeriodHint(now);
     }else{
-      // 後備：若缺資料就維持原本「下次日出」
       const ns=fRes.daily?.sunrise?.[1]||fRes.daily?.sunrise?.[0];
       if(ns){
         const t=new Date(ns); const hh=String(t.getHours()).padStart(2,'0'); const mm=String(t.getMinutes()).padStart(2,'0');
@@ -532,17 +587,25 @@ async function loadAll(lat,lon,updateLocText=false){
     console.error('forecast error',e);
   }
 
-  /* 海況 -------------------------------------------------------*/
+  /* ---- 海況 + 潮汐（open-meteo marine） ---- */
   try{
     const urlMarine=new URL('https://marine-api.open-meteo.com/v1/marine');
     urlMarine.search=new URLSearchParams({
-      latitude:lat,longitude:lon,timezone:'auto',cell_selection:'sea',
-      current:['ocean_current_velocity','ocean_current_direction','sea_surface_temperature','wave_height','wave_direction'].join(',')
+      latitude:lat, longitude:lon, timezone:'auto', cell_selection:'sea',
+      current:[
+        'ocean_current_velocity','ocean_current_direction',
+        'sea_surface_temperature','wave_height','wave_direction',
+        'sea_level_height_msl'
+      ].join(','),
+      hourly:['sea_level_height_msl'].join(',')
     });
+
     const mRes=await fetch(urlMarine).then(r=>r.json());
+
+    /* ====== 浪況卡（海流/浪高提示） ====== */
     const cur=mRes.current||{};
-    const curMs=(cur.ocean_current_velocity??0);
-    const curMsVal=curMs*1000/3600;
+    const curKmh=(cur.ocean_current_velocity??0);               // km/h
+    const curMsVal=curKmh*1000/3600;                            // 顯示 m/s
     document.getElementById('wave-current').textContent=curMsVal.toFixed(1);
 
     const sst=cur.sea_surface_temperature;
@@ -550,12 +613,68 @@ async function loadAll(lat,lon,updateLocText=false){
     document.getElementById('current-speed').textContent=curMsVal.toFixed(1);
 
     const wdir=cur.wave_direction??0;
-    const compass=degToCompass(wdir);
-    document.getElementById('wave-dir').textContent=`${Math.round(wdir)}° ${compass}`;
+    document.getElementById('wave-dir').textContent=`${Math.round(wdir)}° ${degToCompass(wdir)}`;
 
-    document.getElementById('wave-hint').textContent='水面平靜，是最佳垂釣時機？';
+    const waveH = cur.wave_height; // m
+    document.getElementById('wave-hint').textContent = waveHintByHeight(waveH);
+
+    /* ====== 潮汐卡（高度 + 漲退趨勢 + 下一極值） ====== */
+    const tideNow = cur.sea_level_height_msl; // m
+    if (tideNow != null){
+      document.getElementById('tide-current').textContent = tideNow.toFixed(2);
+    }
+
+    const times = (mRes.hourly?.time||[]).map(t=>new Date(t));
+    const heights = mRes.hourly?.sea_level_height_msl||[];
+
+    const fmtHM = d => `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
+    if (times.length > 2 && heights.length === times.length){
+      const now = new Date();
+
+      // 找到接近現在的索引
+      let idx = times.findIndex(t=>t > now);
+      if (idx === -1) idx = times.length - 1;
+      else if (idx > 0) idx -= 1;
+      idx = Math.max(1, Math.min(idx, heights.length-2));
+
+      // 趨勢（下一小時）
+      const rising = heights[idx+1] > heights[idx] + 1e-6;
+      const falling = heights[idx+1] < heights[idx] - 1e-6;
+      const trend = rising ? '（漲潮中）' : (falling ? '（退潮中）' : '（平潮）');
+
+      // 先依高度給提示，再加上趨勢
+      const nowH = (tideNow!=null) ? tideNow : heights[idx];
+      document.getElementById('tide-hint').textContent = `${tideHintByHeight(nowH)}${trend}`;
+
+      // 尋找下一次局部極小（乾潮）與極大（滿潮）
+      const findNextIdx = (start, cmp) => {
+        for (let i=Math.max(1,start); i<heights.length-1; i++){
+          if (cmp(heights[i-1], heights[i], heights[i+1])) return i;
+        }
+        return -1;
+      };
+      const isMin = (a,b,c)=> a>b && b<c;
+      const isMax = (a,b,c)=> a<b && b>c;
+
+      const lowIdx  = findNextIdx(idx, isMin);
+      const highIdx = findNextIdx(idx, isMax);
+
+      if (lowIdx !== -1){
+        document.getElementById('tide-next-low-time').textContent = fmtHM(times[lowIdx]);
+        document.getElementById('tide-next-low-height').textContent = `${heights[lowIdx].toFixed(2)} m`;
+      }
+      if (highIdx !== -1){
+        document.getElementById('tide-next-high-time').textContent = fmtHM(times[highIdx]);
+        document.getElementById('tide-next-high-height').textContent = `${heights[highIdx].toFixed(2)} m`;
+      }
+    }else{
+      document.getElementById('tide-hint').textContent = '潮汐資料不足';
+    }
+
   }catch(e){
     document.getElementById('wave-hint').textContent='海況資料取得失敗';
+    document.getElementById('tide-hint').textContent='潮汐資料取得失敗';
     console.error('marine error',e);
   }
 }
