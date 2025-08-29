@@ -78,7 +78,7 @@ body{
 .pressure .range{position:absolute;left:26px;right:26px;bottom:8px;display:flex;justify-content:space-between;font-size:11px;}
 /* Moon */
 .moon .moon-row{display:flex;align-items:center;gap:12px;margin-top:10px;}
-.moon .moon-phase{width:48px;height:48px;object-fit:contain;flex:0 0 auto;}
+.moon .moon-emoji{width:45px;height:45px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;}
 .moon .stats{display:flex;flex-direction:column;gap:8px;font-size:12px;line-height:1.35;}
 .moon .stat-row{display:flex;align-items:center;gap:8px;}
 .moon .stat-row img{width:14px;height:14px;object-fit:contain;opacity:.9;}
@@ -250,16 +250,25 @@ body{
       </div>
     </section>
 
-    <!-- 月相 ----------------------------------------------------------------->
+    <!-- 月相（USNO） --------------------------------------------------------->
     <section class="card moon">
-      <div class="header"><div class="header-left"><span>月相</span></div><div class="chev">›</div></div>
-      <div class="hint">夜光亮度高，魚兒較挑食</div>
+      <div class="header"><div class="header-left"><span id="moon-title">月相</span></div><div class="chev">›</div></div>
+      <div class="hint" id="moon-hint">資料載入中…</div>
       <div class="moon-row">
-        <img class="moon-phase" src="assets/images/Image_mockupmoonstate.png" alt="月相">
+        <div id="moonEmoji" class="moon-emoji" role="img" aria-label="月相">🌘</div>
         <div class="stats">
-          <div class="stat-row"><img src="assets/images/Icon_birghtness.png" alt=""><span class="label">照度</span><span class="value">-%</span></div>
-          <div class="stat-row"><img src="assets/images/Icon_moonset.png" alt=""><span class="label">月出/月落</span><span class="value">-</span></div>
-          <div class="stat-row"><img src="assets/images/icon_fullMoon.png" alt=""><span class="label">下次滿月</span><span class="value">-天</span></div>
+          <div class="stat-row">
+            <img src="assets/images/Icon_birghtness.png" alt="">
+            <span class="label">照度</span><span class="value" id="moon-illum">—%</span>
+          </div>
+          <div class="stat-row">
+            <img src="assets/images/Icon_moonset.png" alt="">
+            <span class="label" id="moon-rise-type">月出/月落</span><span class="value" id="moon-rise-set">—</span>
+          </div>
+          <div class="stat-row">
+            <img src="assets/images/icon_fullMoon.png" alt="">
+            <span class="label">下次滿月</span><span class="value" id="moon-next-full">— 天</span>
+          </div>
         </div>
       </div>
     </section>
@@ -381,6 +390,7 @@ function renderList(kw=''){
       closeSheet();
       const {lat,lon}=p.useCurrent?await getCoords():{lat:p.lat,lon:p.lon};
       await loadAll(lat,lon,true);
+      await loadMoonUSNO(lat,lon);   // 更新月相
       window.scrollTo({top:0,behavior:'smooth'});
     });
     placeList.appendChild(li);
@@ -394,7 +404,7 @@ const kmhToBeaufort=kmh=>[1,5,11,19,28,38,49,61,74,88,102,117,9999].findIndex(x=
 const degToCompass=deg=>["北","北北東","東北","東北東","東","東南東","東南","南南東","南","南南西","西南","西南西","西","西北西","西北","北北西"][Math.round(deg/22.5)%16];
 
 const tideHintByHeight=h=>{
-  const x=Math.max(0, h); // 負值視為 0
+  const x=Math.max(0, h);
   if(x<=0.5) return '海灘範圍寬，適合沿岸走走';
   if(x<=1.5) return '岸邊活動舒適，留意浪花';
   if(x<=2.5) return '岸邊注意腳下安全';
@@ -413,16 +423,16 @@ const waveHintByHeight=h=>{
 
 const windHintByBeaufort=b=>{
   return [
-    '幾乎無風，空氣靜止',            // 0
-    '微風輕拂，幾乎感受不到',        // 1
-    '微風輕柔，葉子輕輕擺動',        // 2
-    '小風擾動，樹梢微微擺動',        // 3
-    '微強的風，小心帽子飛走',        // 4
-    '中等強風，注意保暖防護',        // 5
-    '強風來襲，戶外活動小心',        // 6
-    '烈風明顯，可能行走困難',        // 7
-    '烈風增強，戶外活動不建議',      // 8
-    '請待在室內確保安全'             // 9+
+    '幾乎無風，空氣靜止',
+    '微風輕拂，幾乎感受不到',
+    '微風輕柔，葉子輕輕擺動',
+    '小風擾動，樹梢微微擺動',
+    '微強的風，小心帽子飛走',
+    '中等強風，注意保暖防護',
+    '強風來襲，戶外活動小心',
+    '烈風明顯，可能行走困難',
+    '烈風增強，戶外活動不建議',
+    '請待在室內確保安全'
   ][Math.min(b,9)];
 };
 
@@ -469,14 +479,14 @@ const getCoords=()=>new Promise(resolve=>{
 /* ========= 時段提示（依附圖，不重疊分段） ================================ */
 function getPeriodHint(date){
   const m = date.getHours()*60 + date.getMinutes();
-  if (m < 240)   return '深夜寧靜，適合思考或入眠。';  // 00:00–04:00
-  if (m < 360)   return '晨曦初現，萬物甦醒。';        // 04:00–06:00
-  if (m < 480)   return '天光乍現，新的一天開始。';  // 06:00–08:00
-  if (m < 660)   return '朝氣蓬勃，是活動的時段。';  // 08:00–11:00
-  if (m < 780)   return '日正當中，溫度逐漸升高。';  // 11:00–13:00
-  if (m < 960)   return '午後時段，適合輕活動。';    // 13:00–16:00
-  if (m < 1140)  return '夕陽西下，光影溫柔。';      // 16:00–19:00
-  return '燈火初上，靜享夜色。';                      // 19:00–24:00
+  if (m < 240)   return '深夜寧靜，適合思考或入眠。';
+  if (m < 360)   return '晨曦初現，萬物甦醒。';
+  if (m < 480)   return '天光乍現，新的一天開始。';
+  if (m < 660)   return '朝氣蓬勃，是活動的時段。';
+  if (m < 780)   return '日正當中，溫度逐漸升高。';
+  if (m < 960)   return '午後時段，適合輕活動。';
+  if (m < 1140)  return '夕陽西下，光影溫柔。';
+  return '燈火初上，靜享夜色。';
 }
 
 /* ========= WMO 對應（圖示/提示） ========================================= */
@@ -493,6 +503,171 @@ function setWeatherIconByWMO(container,wmo){
   container.appendChild(img);
 }
 const WMO_HINT_ZH={0:'今天天氣晴朗心情好',1:'天空多雲但仍舒適',2:'陽光與雲朵交錯',3:'陰天出門記得帶外套',45:'霧氣較重，行車請小心',48:'霜霧低能見度，注意安全',51:'毛毛雨，出門帶把傘',53:'細雨綿綿，記得防水',55:'小雨偏強，外出要備雨具',80:'短暫陣雨，別忘了雨傘',81:'陣雨明顯，路面濕滑小心',82:'強陣雨，外出請小心',61:'小雨滴答，帶件薄外套',63:'中雨來訪，行車放慢速度',65:'大雨滂沱，留意積水',56:'小冰霰／凍毛雨，路面易滑',57:'凍毛雨偏強，注意結冰',66:'小凍雨，請小心路滑',67:'凍雨較強，當心結冰',71:'小雪紛飛，注意保暖',73:'中雪飄落，外出請注意',75:'大雪／暴雪，交通恐受影響',77:'雪粒飄落，能見度略降',85:'小雪陣雪，風大時更冷',86:'強陣雪，視線不佳',95:'雷雨發展，遠離空曠與樹下',96:'雷雨夾雹，待在室內較安全',99:'強雷雨夾雹，務必注意安全'};
+
+/* ========= 月相（USNO） =================================================== */
+// 月相中文字
+const zhPhase = {
+  'New Moon':'新月','Full Moon':'滿月',
+  'First Quarter':'上弦月','Last Quarter':'下弦月',
+  'Waxing Crescent':'峨眉月','Waning Crescent':'殘月',
+  'Waxing Gibbous':'盈凸月','Waning Gibbous':'虧凸月'
+};
+// 你的提示語（依月相顯示）
+const phaseHintZh = {
+  '新月':'黑夜無光，夜空顯得格外寧靜',
+  '峨眉月':'月光初現，天空透出溫柔光暈',
+  '上弦月':'半輪明月，如切如磋',
+  '盈凸月':'月輪漸圓，光彩漸明',
+  '滿月':'月色皎潔，萬物染上銀輝',
+  '虧凸月':'光影退隱，夜晚漸深',
+  '下弦月':'半月傾斜，夜色靜謐',
+  '殘月':'淡月如鉤，天光將至'
+};
+
+// 北半球（標準）與南半球（翻轉）的 emoji 對應
+const emojiNorth = {
+  'New Moon':'🌑','Waxing Crescent':'🌒','First Quarter':'🌓','Waxing Gibbous':'🌔',
+  'Full Moon':'🌕','Waning Gibbous':'🌖','Last Quarter':'🌗','Waning Crescent':'🌘'
+};
+const emojiSouth = {
+  'New Moon':'🌑','Waxing Crescent':'🌘','First Quarter':'🌗','Waxing Gibbous':'🌖',
+  'Full Moon':'🌕','Waning Gibbous':'🌔','Last Quarter':'🌓','Waning Crescent':'🌒'
+};
+function pickMoonEmoji(phase, lat){
+  const map = (lat>=0)?emojiNorth:emojiSouth;
+  return map[phase] || '🌕';
+}
+function pad2(n){return String(n).padStart(2,'0');}
+function localDateStr(d){
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+}
+function getLocalTZHours(){ return -new Date().getTimezoneOffset()/60; }
+
+// 解析 USNO 時間：支援 "07:06" 或 "7:06 am"/"pm"，以及 "on following day"
+function parseUSNOTimeToDate(timestr, baseDate){
+  if(!timestr) return null;
+  const raw = String(timestr).trim().toLowerCase();
+  const isNextDay = raw.includes('following day');
+  const s = raw.replace('on following day','').replace(/\./g,'').trim();
+
+  let hh=0, mm=0;
+  const ampmMatch = s.match(/(\d{1,2}):(\d{2})\s*([ap]m)$/);
+  const h24Match  = s.match(/^(\d{1,2}):(\d{2})$/);
+
+  if(ampmMatch){
+    hh = parseInt(ampmMatch[1],10); mm = parseInt(ampmMatch[2],10);
+    const ap = ampmMatch[3];
+    if(ap==='pm' && hh<12) hh+=12;
+    if(ap==='am' && hh===12) hh=0;
+  }else if(h24Match){
+    hh = parseInt(h24Match[1],10); mm = parseInt(h24Match[2],10);
+  }else{
+    return null;
+  }
+
+  return new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate() + (isNextDay?1:0), hh, mm, 0);
+}
+
+// AM/PM 顯示
+function fmt12h(d){
+  let h = d.getHours(), m = d.getMinutes();
+  const ap = h>=12 ? 'PM' : 'AM';
+  h = h%12; if(h===0) h=12;
+  return `${h}:${pad2(m)}${ap}`;
+}
+
+async function loadMoonUSNO(lat, lon){
+  const tz = getLocalTZHours(); // 用使用者瀏覽器所在時區
+  const today = new Date();
+  const dateStr = localDateStr(today);
+  const base = `https://aa.usno.navy.mil/api/rstt/oneday?date=${dateStr}&coords=${lat.toFixed(3)},${lon.toFixed(3)}&tz=${tz}`;
+
+  try{
+    const res = await fetch(base);
+    const j = await res.json();
+    const data = j?.properties?.data || {};
+
+    // 1) 今日月相 + emoji + 標題 + 提示語
+    const curphase = data.curphase || '';
+    const fracillum = data.fracillum; // e.g. "4%"
+    document.getElementById('moonEmoji').textContent = pickMoonEmoji(curphase, lat);
+    const zh = zhPhase[curphase] || curphase || '月相';
+    document.getElementById('moon-title').textContent = zh || '月相';
+    document.getElementById('moon-hint').textContent = phaseHintZh[zh] || '月相更新中';
+
+    // 2) 照度（百分比字串 → 直接顯示）
+    if(typeof fracillum === 'string' && fracillum.trim()){
+      const num = parseFloat(fracillum); // 例如 "4%" -> 4
+      document.getElementById('moon-illum').textContent = Number.isFinite(num)? `${num}%` : '—%';
+    }else{
+      document.getElementById('moon-illum').textContent = '—%';
+    }
+
+    // 3) 下次月出／月落（先查今天，必要時查明天）
+    const moondata = Array.isArray(data.moondata) ? data.moondata : [];
+    const now = new Date();
+
+    function pickNextRiseSet(list, baseDate){
+      const rise = list.find(x=>/^rise$/i.test(x.phen));
+      const setd = list.find(x=>/^set$/i.test(x.phen));
+      const cand = [];
+      if(rise){ const t=parseUSNOTimeToDate(rise.time, baseDate); if(t) cand.push({type:'月出', time:t}); }
+      if(setd){ const t=parseUSNOTimeToDate(setd.time, baseDate); if(t) cand.push({type:'月落', time:t}); }
+      const future = cand.filter(x=>x.time>now).sort((a,b)=>a.time-b.time);
+      return future[0] || null;
+    }
+
+    let nextEvt = pickNextRiseSet(moondata, today);
+    if(!nextEvt){
+      // 今天都過了 → 查明天
+      const tmr = new Date(today.getTime()+86400000);
+      const url2=`https://aa.usno.navy.mil/api/rstt/oneday?date=${localDateStr(tmr)}&coords=${lat.toFixed(3)},${lon.toFixed(3)}&tz=${tz}`;
+      try{
+        const r2 = await fetch(url2).then(r=>r.json());
+        const d2 = r2?.properties?.data || {};
+        nextEvt = pickNextRiseSet(Array.isArray(d2.moondata)?d2.moondata:[], tmr);
+      }catch{}
+    }
+
+    if(nextEvt){
+      document.getElementById('moon-rise-type').textContent = `下次${nextEvt.type}`;
+      document.getElementById('moon-rise-set').textContent  = fmt12h(nextEvt.time);
+    }else{
+      document.getElementById('moon-rise-type').textContent = '月出/月落';
+      document.getElementById('moon-rise-set').textContent  = '—';
+    }
+
+    // 4) 下次滿月天數（phases：UT 時間）
+    try{
+      const purl = `https://aa.usno.navy.mil/api/moon/phases/date?date=${dateStr}&nump=8`;
+      const pres = await fetch(purl).then(r=>r.json());
+      const arr = pres?.phasedata || [];
+      // 找第一個「未來」的 Full Moon（UTC 比較）
+      const nowUTCms = Date.now();
+      const fm = arr.map(x=>{
+        const [H='0',M='0']=String(x.time||'00:00').split(':');
+        const utcMs = Date.UTC(x.year, (x.month||1)-1, x.day||1, parseInt(H,10)||0, parseInt(M,10)||0);
+        return {phase:x.phase, utcMs};
+      }).find(x=>/full moon/i.test(x.phase) && x.utcMs>=nowUTCms);
+
+      if(fm){
+        const diffDays = Math.ceil((fm.utcMs - nowUTCms)/86400000);
+        document.getElementById('moon-next-full').textContent = `${diffDays} 天`;
+      }else{
+        document.getElementById('moon-next-full').textContent = '— 天';
+      }
+    }catch{
+      document.getElementById('moon-next-full').textContent = '— 天';
+    }
+
+  }catch(e){
+    console.error('USNO moon error', e);
+    document.getElementById('moon-hint').textContent='月相資料取得失敗';
+    document.getElementById('moon-illum').textContent='—%';
+    document.getElementById('moon-rise-set').textContent='—';
+    document.getElementById('moon-next-full').textContent='— 天';
+  }
+}
 
 /* ========= 主資料載入（統一撈） ========================================= */
 async function loadAll(lat,lon,updateLocText=false){
@@ -604,8 +779,8 @@ async function loadAll(lat,lon,updateLocText=false){
 
     /* ====== 浪況卡（海流/浪高提示） ====== */
     const cur=mRes.current||{};
-    const curKmh=(cur.ocean_current_velocity??0);               // km/h
-    const curMsVal=curKmh*1000/3600;                            // 顯示 m/s
+    const curKmh=(cur.ocean_current_velocity??0);
+    const curMsVal=curKmh*1000/3600;
     document.getElementById('wave-current').textContent=curMsVal.toFixed(1);
 
     const sst=cur.sea_surface_temperature;
@@ -615,11 +790,11 @@ async function loadAll(lat,lon,updateLocText=false){
     const wdir=cur.wave_direction??0;
     document.getElementById('wave-dir').textContent=`${Math.round(wdir)}° ${degToCompass(wdir)}`;
 
-    const waveH = cur.wave_height; // m
+    const waveH = cur.wave_height;
     document.getElementById('wave-hint').textContent = waveHintByHeight(waveH);
 
     /* ====== 潮汐卡（高度 + 漲退趨勢 + 下一極值） ====== */
-    const tideNow = cur.sea_level_height_msl; // m
+    const tideNow = cur.sea_level_height_msl;
     if (tideNow != null){
       document.getElementById('tide-current').textContent = tideNow.toFixed(2);
     }
@@ -631,23 +806,18 @@ async function loadAll(lat,lon,updateLocText=false){
 
     if (times.length > 2 && heights.length === times.length){
       const now = new Date();
-
-      // 找到接近現在的索引
       let idx = times.findIndex(t=>t > now);
       if (idx === -1) idx = times.length - 1;
       else if (idx > 0) idx -= 1;
       idx = Math.max(1, Math.min(idx, heights.length-2));
 
-      // 趨勢（下一小時）
       const rising = heights[idx+1] > heights[idx] + 1e-6;
       const falling = heights[idx+1] < heights[idx] - 1e-6;
       const trend = rising ? '（漲潮中）' : (falling ? '（退潮中）' : '（平潮）');
 
-      // 先依高度給提示，再加上趨勢
       const nowH = (tideNow!=null) ? tideNow : heights[idx];
       document.getElementById('tide-hint').textContent = `${tideHintByHeight(nowH)}${trend}`;
 
-      // 尋找下一次局部極小（乾潮）與極大（滿潮）
       const findNextIdx = (start, cmp) => {
         for (let i=Math.max(1,start); i<heights.length-1; i++){
           if (cmp(heights[i-1], heights[i], heights[i+1])) return i;
@@ -684,6 +854,7 @@ async function loadAll(lat,lon,updateLocText=false){
   const {lat,lon}=await getCoords();
   locText.textContent=await reverseGeocode(lat,lon);
   await loadAll(lat,lon);
+  await loadMoonUSNO(lat,lon);   // 初始化月相
 })();
 </script>
 </body>
